@@ -43,6 +43,106 @@ class GameFinderApp {
         });
     }
 
+    initDiscordButtons() {
+    const discordButtons = document.querySelectorAll('.send-to-discord-btn');
+    
+    discordButtons.forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const gameData = JSON.parse(button.getAttribute('data-game'));
+            console.log('🔄 Sending game to Discord:', gameData.name);
+            
+            // Показываем загрузку
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Отправляем...';
+            button.disabled = true;
+            
+            try {
+                await this.sendToDiscord(gameData);
+            } catch (error) {
+                console.error('❌ Error sending to Discord:', error);
+            } finally {
+                // Восстанавливаем кнопку
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }
+        });
+    });
+}
+
+// Метод для отправки в Discord
+async sendToDiscord(gameData) {
+    try {
+        console.log('📨 Sending to Discord:', gameData.name);
+        
+        const response = await fetch('https://games.gamefinders.org/api/send-to-discord', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                game: gameData,
+                user: 'Website User',
+                source: 'website',
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        const result = await response.json();
+        
+        if (result.ok) {
+            console.log('✅ Sent to Discord successfully');
+            this.showNotification('🎮 Запрос отправлен в Discord! Проверьте канал.', 'success');
+        } else {
+            throw new Error(result.error || 'Unknown error');
+        }
+    } catch (error) {
+        console.error('❌ Error sending to Discord:', error);
+        this.showNotification('❌ Ошибка отправки в Discord', 'error');
+        throw error;
+    }
+}
+
+// Метод для показа уведомлений
+showNotification(message, type = 'info') {
+    // Удаляем старое уведомление если есть
+    const oldNotification = document.querySelector('.notification');
+    if (oldNotification) {
+        oldNotification.remove();
+    }
+
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? 'rgba(34, 197, 94, 0.9)' : 'rgba(239, 68, 68, 0.9)'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        ">
+            ${message}
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 4000);
+}
     initEventListeners() {
         // Кнопка поиска
         if (this.searchBtn) {
@@ -206,13 +306,13 @@ class GameFinderApp {
 
     console.log(`🎮 Displaying ${games.length} games`);
     
-    // Ограничиваем показ 20 играми
     const gamesToShow = games.slice(0, 20);
     
     this.gamesContainer.innerHTML = gamesToShow.map((game, index) => `
         <div class="game-card fade-in-up" style="animation-delay: ${index * 0.05}s" 
              data-game='${JSON.stringify(game).replace(/'/g, "&#39;")}'>
             
+            <!-- остальная часть карточки без изменений -->
             <div class="game-header">
                 <div class="game-title-section">
                     <h4 class="game-title clickable-title">${game.name || 'Название игры'}</h4>
@@ -247,6 +347,7 @@ class GameFinderApp {
                 ${game.whyPerfect || 'Идеально подходит под ваш запрос'}
             </div>
 
+            <!-- ИЗМЕНЕННАЯ СЕКЦИЯ - вот эта часть -->
             <div class="stores-container">
                 <h4>💸 Узнать цену и купить</h4>
                 <div class="discord-price-mini">
@@ -254,19 +355,22 @@ class GameFinderApp {
                         <span class="discord-mini-icon">🎮</span>
                         <span class="discord-mini-text">Актуальные цены в Discord</span>
                     </div>
-                    <a href="https://discord.gg/MeHJ9epedA" class="discord-mini-btn" target="_blank" onclick="event.stopPropagation()">
-                        Узнать цену
-                    </a>
+                    <button class="discord-mini-btn send-to-discord-btn" 
+                            data-game='${JSON.stringify(game).replace(/'/g, "&quot;")}'>
+                        📩 Получить цену в Discord
+                    </button>
                 </div>
                 <div class="price-note">
-                    💡 Получите самые свежие цены со всех магазинов
+                    💡 Нажмите кнопку и бот пришлет актуальные цены со всех магазинов в Discord
                 </div>
             </div>
         </div>
     `).join('');
 
-        // Добавляем обработчики для клика по играм
-        this.initGameClickHandlers();
+    // Добавляем обработчики для новых кнопок
+    this.initDiscordButtons();
+    this.initGameClickHandlers();
+
     }
 
     initGameClickHandlers() {

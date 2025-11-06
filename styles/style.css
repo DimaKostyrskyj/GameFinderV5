@@ -3330,3 +3330,43 @@ input:focus, textarea:focus, select:focus {
 .game-card:nth-child(18) { animation-delay: 0.9s; }
 .game-card:nth-child(19) { animation-delay: 0.95s; }
 .game-card:nth-child(20) { animation-delay: 1.0s; }
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Стили для кнопки отправки в Discord */
+.discord-mini-btn {
+    display: block;
+    background: linear-gradient(45deg, #5865f2, #4752c4);
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.discord-mini-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+    background: linear-gradient(45deg, #4752c4, #3c45a5);
+}
+
+.discord-mini-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
