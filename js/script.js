@@ -77,7 +77,7 @@ async sendToDiscord(gameData) {
     try {
         console.log('📨 Sending to Discord:', gameData.name);
         
-        const response = await fetch('https://games.gamefinders.org/api/send-to-discord', {
+        const response = await fetch('https://gamefinders.org', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
