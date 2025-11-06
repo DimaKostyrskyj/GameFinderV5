@@ -221,7 +221,7 @@ class PriceAPI {
 }
 async function sendGameToDiscord(game) {
   try {
-    const res = await fetch("http://localhost:3000/api/send-to-discord", {
+    const res = await fetch("/api/send-to-discord", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(game)

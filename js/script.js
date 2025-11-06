@@ -12,6 +12,7 @@ class GameFinderApp {
         this.initApp();
     }
     
+    
     initApp() {
         try {
             this.initDOMElements();
@@ -77,7 +78,7 @@ async sendToDiscord(gameData) {
     try {
         console.log('📨 Sending to Discord:', gameData.name);
         
-        const response = await fetch('https://gamefinders.org', {
+         const response = await fetch('https://www.gamefinders.org/api/discord', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
