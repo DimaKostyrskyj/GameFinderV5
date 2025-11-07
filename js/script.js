@@ -78,30 +78,42 @@ async sendToDiscord(gameData) {
     try {
         console.log('📨 Sending to Discord:', gameData.name);
         
-         const response = await fetch('https://www.gamefinders.org/api/discord', {
+        // URL вашего API сервера - ВАЖНО: используйте правильный домен!
+        const API_URL = 'https://api.gamefinders.org'; // или ваш домен где запущен api-server.js
+        
+        const response = await fetch(`${API_URL}/api/discord`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 game: gameData,
-                user: 'Website User',
-                source: 'website',
+                user: 'Website Visitor',
+                source: 'gamefinders.org',
                 timestamp: new Date().toISOString()
             })
         });
 
+        console.log('📡 Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Server error:', errorText);
+            throw new Error(`Server error: ${response.status} - ${errorText}`);
+        }
+
         const result = await response.json();
+        console.log('📦 Response data:', result);
         
         if (result.ok) {
             console.log('✅ Sent to Discord successfully');
             this.showNotification('🎮 Запрос отправлен в Discord! Проверьте канал.', 'success');
         } else {
-            throw new Error(result.error || 'Unknown error');
+            throw new Error(result.error || 'Unknown error from server');
         }
     } catch (error) {
         console.error('❌ Error sending to Discord:', error);
-        this.showNotification('❌ Ошибка отправки в Discord', 'error');
+        this.showNotification('❌ Ошибка отправки в Discord: ' + error.message, 'error');
         throw error;
     }
 }
