@@ -3983,54 +3983,181 @@ input:focus, textarea:focus, select:focus {
 }
 /* Стили для улучшенной секции "Как это работает" */
 .about-section {
-    padding: 80px 0;
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .about-card {
-    padding: 60px;
+    padding: 80px 60px;
     max-width: 1400px;
     margin: 0 auto;
+    position: relative;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
 }
 
+/* Анимированный фон */
+.about-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+    opacity: 0.1;
+    filter: blur(40px);
+}
+
+.shape-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 5%;
+    animation: floatShape 8s ease-in-out infinite;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: 10%;
+    animation: floatShape 6s ease-in-out infinite reverse;
+}
+
+.shape-3 {
+    width: 100px;
+    height: 100px;
+    bottom: 20%;
+    left: 15%;
+    animation: floatShape 10s ease-in-out infinite;
+}
+
+@keyframes floatShape {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    33% {
+        transform: translateY(-20px) rotate(120deg);
+    }
+    66% {
+        transform: translateY(10px) rotate(240deg);
+    }
+}
+
+/* Заголовок секции */
 .about-header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 80px;
+    position: relative;
+    z-index: 2;
 }
 
-.about-header h2 {
-    font-size: 3rem;
-    font-weight: 700;
+.header-decoration {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.decoration-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    animation: pulseDot 2s ease-in-out infinite;
+}
+
+.dot-1 {
+    left: -40px;
+    animation-delay: 0s;
+}
+
+.dot-2 {
+    left: 0;
+    animation-delay: 0.4s;
+}
+
+.dot-3 {
+    left: 40px;
+    animation-delay: 0.8s;
+}
+
+@keyframes pulseDot {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+}
+
+.about-title {
+    font-size: 3.5rem;
+    font-weight: 800;
     margin-bottom: 20px;
-    background: linear-gradient(45deg, #0ea5e9, #8b5cf6, #ec4899);
+    position: relative;
+}
+
+.title-gradient {
+    background: linear-gradient(135deg, #0ea5e9, #8b5cf6, #ec4899, #f59e0b);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    background-size: 300% 300%;
+    animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .about-subtitle {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: var(--text-gray);
     max-width: 600px;
     margin: 0 auto;
     line-height: 1.6;
+    font-weight: 400;
 }
 
 /* Сетка функций */
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: 30px;
-    margin-bottom: 60px;
+    margin-bottom: 80px;
+    position: relative;
+    z-index: 2;
 }
 
+/* Карточки функций */
 .feature-card {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 35px 30px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+    padding: 40px 30px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(20px);
 }
 
 .feature-card::before {
@@ -4040,8 +4167,8 @@ input:focus, textarea:focus, select:focus {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-    transition: left 0.6s;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.8s;
 }
 
 .feature-card:hover::before {
@@ -4049,167 +4176,262 @@ input:focus, textarea:focus, select:focus {
 }
 
 .feature-card:hover {
-    transform: translateY(-10px);
-    border-color: rgba(14, 165, 233, 0.3);
-    box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+    transform: translateY(-15px) scale(1.02);
+    border-color: rgba(14, 165, 233, 0.4);
+    box-shadow: 0 25px 50px rgba(14, 165, 233, 0.2);
 }
 
-/* Особый стиль для Discord карточки */
-.feature-card.discord-feature {
-    border-color: rgba(88, 101, 242, 0.3);
-    background: linear-gradient(135deg, rgba(88, 101, 242, 0.1), rgba(139, 92, 246, 0.05));
+.card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    border-radius: 24px;
 }
 
-.feature-card.discord-feature:hover {
-    border-color: rgba(88, 101, 242, 0.5);
-    box-shadow: 0 20px 40px rgba(88, 101, 242, 0.2);
+.feature-card:hover .card-glow {
+    opacity: 1;
 }
 
-/* Иконки функций */
+.discord-glow {
+    background: linear-gradient(135deg, rgba(88, 101, 242, 0.15), transparent);
+}
+
+/* Иконки */
 .feature-icon-wrapper {
     position: relative;
-    display: inline-block;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
 }
 
-.feature-icon {
-    width: 70px;
-    height: 70px;
+.feature-icon-bg {
+    width: 80px;
+    height: 80px;
     background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
     position: relative;
     z-index: 2;
+    transition: all 0.3s ease;
 }
 
-.feature-card.discord-feature .feature-icon {
+.discord-bg {
     background: linear-gradient(135deg, #5865f2, #4752c4);
 }
 
-.feature-pulse {
+.feature-card:hover .feature-icon-bg {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.feature-icon {
+    font-size: 2.2rem;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.2);
+}
+
+/* Орбиты вокруг иконок */
+.icon-orbits {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+}
+
+.orbit {
+    position: absolute;
+    border: 2px solid rgba(14, 165, 233, 0.3);
     border-radius: 50%;
-    opacity: 0.3;
-    animation: pulse 2s ease-in-out infinite;
+    animation: orbitRotate 3s linear infinite;
 }
 
-.feature-card.discord-feature .feature-pulse {
-    background: linear-gradient(135deg, #5865f2, #4752c4);
+.orbit-1 {
+    width: 100px;
+    height: 100px;
+    animation-delay: 0s;
 }
 
-@keyframes pulse {
-    0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.3;
+.orbit-2 {
+    width: 120px;
+    height: 120px;
+    animation-delay: 1.5s;
+}
+
+@keyframes orbitRotate {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
     }
-    50% {
-        transform: translate(-50%, -50%) scale(1.1);
-        opacity: 0.2;
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
     }
 }
 
-/* Заголовки и текст */
-.feature-card h3 {
-    font-size: 1.4rem;
-    font-weight: 600;
+/* Текст карточек */
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 15px;
     color: var(--text-white);
+    text-align: center;
 }
 
-.feature-card p {
+.feature-description {
     color: var(--text-gray);
-    line-height: 1.6;
+    line-height: 1.7;
     margin-bottom: 20px;
+    text-align: center;
     font-size: 1rem;
 }
 
-/* Теги функций */
+/* Теги */
 .feature-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    justify-content: center;
 }
 
 .feature-tag {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-white);
-    padding: 6px 12px;
-    border-radius: 15px;
-    font-size: 0.8rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
     font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
 }
 
-/* Кнопки в карточках */
-.discord-join-btn, .download-mini-btn {
+.feature-tag:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    display: inline-block;
+}
+
+/* Кнопки действий */
+.feature-action-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 10px;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 12px;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
-    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    justify-content: center;
+    font-size: 0.95rem;
 }
 
-.discord-join-btn {
+.discord-btn {
     background: linear-gradient(135deg, #5865f2, #4752c4);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.discord-join-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4);
+.download-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.download-mini-btn {
-    background: rgba(16, 185, 129, 0.2);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+.feature-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
-.download-mini-btn:hover {
-    background: rgba(16, 185, 129, 0.3);
-    transform: translateY(-2px);
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.feature-action-btn:hover .btn-shine {
+    left: 100%;
 }
 
 /* Секция призыва к действию */
 .cta-section {
-    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
-    border-radius: 25px;
-    padding: 50px;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(139, 92, 246, 0.1));
+    border-radius: 30px;
+    padding: 60px 40px;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     overflow: hidden;
 }
 
-.cta-section::before {
-    content: '';
+.cta-background {
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: rotate 10s linear infinite;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+.cta-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    animation: particleFloat 6s ease-in-out infinite;
+}
+
+.particle-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.particle-2 {
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.particle-3 {
+    bottom: 30%;
+    left: 20%;
+    animation-delay: 4s;
+}
+
+@keyframes particleFloat {
+    0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(-20px) translateX(10px);
+        opacity: 1;
+    }
 }
 
 .cta-content {
@@ -4217,23 +4439,42 @@ input:focus, textarea:focus, select:focus {
     z-index: 2;
 }
 
-.cta-content h3 {
-    font-size: 2.2rem;
+.cta-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    animation: bounce 3s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.cta-title {
+    font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 15px;
-    background: linear-gradient(45deg, #0ea5e9, #8b5cf6);
+    background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.cta-content p {
-    font-size: 1.2rem;
+.cta-description {
+    font-size: 1.3rem;
     color: var(--text-gray);
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.6;
 }
 
 .cta-buttons {
@@ -4247,51 +4488,114 @@ input:focus, textarea:focus, select:focus {
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    padding: 16px 32px;
-    border-radius: 15px;
+    padding: 18px 35px;
+    border-radius: 16px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 1.1rem;
     border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
 }
 
-.cta-btn.primary {
+.primary-cta-btn {
     background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
     color: white;
 }
 
-.cta-btn.primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(14, 165, 233, 0.4);
+.primary-cta-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(14, 165, 233, 0.4);
 }
 
-.cta-btn.secondary {
+.secondary-cta-btn {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-white);
     border-color: rgba(255, 255, 255, 0.3);
 }
 
-.cta-btn.secondary:hover {
+.secondary-cta-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-3px);
     border-color: rgba(255, 255, 255, 0.5);
 }
 
+.btn-sparkle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+.sparkle:nth-child(1) {
+    top: 20%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.sparkle:nth-child(2) {
+    top: 60%;
+    left: 80%;
+    animation-delay: 0.5s;
+}
+
+.sparkle:nth-child(3) {
+    top: 80%;
+    left: 40%;
+    animation-delay: 1s;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.btn-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s;
+}
+
+.secondary-cta-btn:hover .btn-glow {
+    left: 100%;
+}
+
 /* Адаптивность */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .features-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     }
 }
 
 @media (max-width: 768px) {
     .about-card {
-        padding: 30px 20px;
+        padding: 40px 20px;
     }
     
-    .about-header h2 {
-        font-size: 2.2rem;
+    .about-title {
+        font-size: 2.5rem;
     }
     
     .features-grid {
@@ -4300,11 +4604,11 @@ input:focus, textarea:focus, select:focus {
     }
     
     .cta-section {
-        padding: 30px 20px;
+        padding: 40px 20px;
     }
     
-    .cta-content h3 {
-        font-size: 1.8rem;
+    .cta-title {
+        font-size: 2rem;
     }
     
     .cta-buttons {
@@ -4320,17 +4624,28 @@ input:focus, textarea:focus, select:focus {
 }
 
 @media (max-width: 480px) {
-    .about-header h2 {
-        font-size: 1.8rem;
+    .about-title {
+        font-size: 2rem;
     }
     
     .feature-card {
-        padding: 25px 20px;
+        padding: 30px 20px;
+    }
+    
+    .feature-icon-bg {
+        width: 70px;
+        height: 70px;
     }
     
     .feature-icon {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .cta-title {
+        font-size: 1.8rem;
+    }
+    
+    .cta-description {
+        font-size: 1.1rem;
     }
 }
