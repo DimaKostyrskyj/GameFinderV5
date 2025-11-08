@@ -236,7 +236,12 @@ activateKonamiCode() {
 activateGodMode() {
     console.log('🌟 God Mode Activated!');
     
-    // Делаем все карточки золотыми
+    // Мемные божественные звуки
+    this.playGodModeSounds();
+    
+    // Показываем фото Иисуса
+    this.showJesusImage();
+    
     const cards = document.querySelectorAll('.glass-card');
     cards.forEach(card => {
         card.style.background = 'linear-gradient(45deg, rgba(255,215,0,0.3), rgba(255,193,7,0.2))';
@@ -245,9 +250,52 @@ activateGodMode() {
     });
     
     this.showEasterEggMessage('🌟 GOD MODE ACTIVATED! Unlimited Power!', 'god');
-    
-    // Добавляем сияющий эффект курсору
     this.addGodCursor();
+    
+    // Добавляем божественные частицы
+    this.createGodParticles();
+}
+
+showJesusImage() {
+    // Создаем контейнер для изображения Иисуса
+    const jesusContainer = document.createElement('div');
+    jesusContainer.className = 'jesus-container';
+    jesusContainer.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.5);
+        z-index: 10001;
+        animation: jesusAppear 2s ease-out forwards;
+        pointer-events: none;
+    `;
+    
+    // Используем мемное изображение Иисуса (можно заменить на свою ссылку)
+    jesusContainer.innerHTML = `
+        <div style="text-align: center;">
+            <img src="https://i.imgur.com/9Sfz0Qq.png" 
+                 alt="Jesus" 
+                 style="width: 200px; height: 200px; border-radius: 50%; 
+                        border: 4px solid gold; box-shadow: 0 0 50px gold;
+                        animation: jesusGlow 2s ease-in-out infinite alternate;">
+            <div style="color: gold; font-size: 1.5rem; font-weight: bold; 
+                       margin-top: 10px; text-shadow: 0 0 10px gold;">
+                🙏 HE IS RISEN! 🙏
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(jesusContainer);
+    
+    // Убираем через 5 секунд
+    setTimeout(() => {
+        if (jesusContainer.parentNode) {
+            jesusContainer.style.animation = 'jesusDisappear 1s ease-in forwards';
+            setTimeout(() => {
+                if (jesusContainer.parentNode) jesusContainer.remove();
+            }, 1000);
+        }
+    }, 5000);
 }
 
 activateSecretSearch() {
