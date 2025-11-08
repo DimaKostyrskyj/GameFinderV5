@@ -257,46 +257,49 @@ activateGodMode() {
 }
 
 showJesusImage() {
-    console.log('🖼️ Showing Jesus image...');
+    console.log('🖼️ Showing Jesus image from local folder...');
     
     const jesusContainer = document.createElement('div');
     jesusContainer.className = 'jesus-container';
     jesusContainer.style.cssText = `
         position: fixed;
         top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.5);
+        left: -300px; /* Начинаем слева за экраном */
+        transform: translateY(-50%);
         z-index: 10001;
-        animation: jesusAppear 2s ease-out forwards;
+        animation: jesusSlideIn 1s ease-out forwards;
         pointer-events: none;
         text-align: center;
         font-family: Arial, sans-serif;
     `;
     
-    // Используем emoji вместо изображения (гарантированно работает)
+    // Используем локальный файл из папки images
     jesusContainer.innerHTML = `
-        <div style="font-size: 120px; animation: jesusFloat 3s ease-in-out infinite; 
-                   filter: drop-shadow(0 0 20px gold);">
-            👼
+        <div style="animation: jesusFloat 3s ease-in-out infinite;">
+            <img src="./images/jesus.png" 
+                 alt="Jesus" 
+                 style="width: 250px; height: 250px; border-radius: 15px; 
+                        border: 4px solid gold; box-shadow: 0 0 50px gold;
+                        object-fit: cover; background: white;"
+                 onerror="this.onerror=null; this.src='./images/jesus.png';">
         </div>
-        <div style="color: gold; font-size: 2rem; font-weight: bold; margin-top: 20px;
-                   text-shadow: 0 0 20px gold, 0 0 40px orange; animation: textGlow 2s ease-in-out infinite alternate;">
+        <div style="color: gold; font-size: 1.8rem; font-weight: bold; margin-top: 15px;
+                   text-shadow: 0 0 20px gold, 0 0 40px orange;">
             🙏 GOD MODE 🙏
         </div>
-        <div style="color: #ffd700; font-size: 1.2rem; margin-top: 10px; opacity: 0.9;">
-            Divine Power Activated!
+        <div style="color: #ffd700; font-size: 1.1rem; margin-top: 8px; opacity: 0.9;">
+            Divine Power!
         </div>
     `;
     
     document.body.appendChild(jesusContainer);
-    
     console.log('✅ Jesus container added to DOM');
     
-    // Убираем через 5 секунд
+    // Убираем через 5 секунд с выездом обратно
     setTimeout(() => {
         if (jesusContainer.parentNode) {
             console.log('🕒 Removing Jesus image...');
-            jesusContainer.style.animation = 'jesusDisappear 1s ease-in forwards';
+            jesusContainer.style.animation = 'jesusSlideOut 1s ease-in forwards';
             setTimeout(() => {
                 if (jesusContainer.parentNode) {
                     jesusContainer.remove();

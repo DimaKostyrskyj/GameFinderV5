@@ -3924,3 +3924,60 @@ input:focus, textarea:focus, select:focus {
         filter: hue-rotate(60deg);
     }
 }
+/* Анимации для выезда Иисуса слева */
+@keyframes jesusSlideIn {
+    0% {
+        left: -300px;
+        opacity: 0;
+        transform: translateY(-50%) scale(0.8);
+    }
+    70% {
+        left: 50px;
+        opacity: 1;
+        transform: translateY(-50%) scale(1.05);
+    }
+    100% {
+        left: 30px;
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+@keyframes jesusSlideOut {
+    0% {
+        left: 30px;
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+    100% {
+        left: -300px;
+        opacity: 0;
+        transform: translateY(-50%) scale(0.8);
+    }
+}
+
+@keyframes jesusFloat {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-8px) rotate(1deg);
+    }
+    50% {
+        transform: translateY(-4px) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-12px) rotate(-1deg);
+    }
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow: 0 0 10px gold;
+        transform: scale(1);
+    }
+    100% {
+        text-shadow: 0 0 20px gold, 0 0 30px orange;
+        transform: scale(1.05);
+    }
+}
