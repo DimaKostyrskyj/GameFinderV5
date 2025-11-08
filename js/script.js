@@ -9,6 +9,11 @@ class GameFinderApp {
         console.log('🎮 Initializing GameFinderApp...');
         this.gameSearchAI = new DirectGameSearchAI();
         this.priceAPI = window.priceAPI;
+        
+        // Инициализируем аудио систему
+        this.audioContext = null;
+        this.initAudioSystem();
+        
         this.initApp();
     }
     
@@ -35,8 +40,40 @@ class GameFinderApp {
         console.error('❌ Error initializing GameFinderApp:', error);
     }
 }
-
-// Добавьте эти методы в класс GameFinderApp:
+    
+    initAudioSystem() {
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            console.log('🔊 Audio system initialized');
+        } catch (error) {
+            console.warn('🔇 Web Audio API not supported:', error);
+        }
+    }
+    
+    // Метод для воспроизведения звуков
+    playSound(frequency, duration, type = 'sine', volume = 0.3) {
+        if (!this.audioContext) return;
+        
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = type;
+            oscillator.frequency.value = frequency;
+            
+            gainNode.gain.value = volume;
+            gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + duration);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + duration);
+            
+        } catch (error) {
+            console.warn('🔇 Sound error:', error);
+        }
+    }
 
 initEasterEggs() {
     let konamiCode = [];
@@ -621,8 +658,12 @@ activateMusicMode() {
     
     this.showEasterEggMessage('🎵 Music Mode! Click for beats!', 'music');
     
-    // Клики создают музыкальные круги
-    const musicHandler = (e) => this.createMusicCircle(e);
+    // Клики создают музыкальные круги со звуками
+    const musicHandler = (e) => {
+        this.createMusicCircle(e);
+        this.playMusicNote(e.clientX, e.clientY); // Звук зависит от позиции
+    };
+    
     document.addEventListener('click', musicHandler);
     
     // Отключаем через 30 секунд
@@ -640,24 +681,41 @@ createMusicCircle(e) {
     
     circle.style.cssText = `
         position: fixed;
-        left: ${e.clientX}px;    // Позиция клика
-        top: ${e.clientY}px;     // Позиция клика  
+        left: ${e.clientX}px;
+        top: ${e.clientY}px;
         width: 0;
         height: 0;
         border-radius: 50%;
-        background: ${color};    // Случайный цвет
+        background: ${color};
         transform: translate(-50%, -50%);
-        animation: musicPulse 1s ease-out;  // Анимация пульсации
+        animation: musicPulse 1s ease-out;
         pointer-events: none;
         z-index: 9999;
     `;
     
     document.body.appendChild(circle);
     
-    // Автоматически удаляем через 1 секунду
     setTimeout(() => {
         if (circle.parentNode) circle.remove();
     }, 1000);
+}
+playMusicNote(x, y) {
+    if (!this.audioContext) return;
+    
+    // Частота зависит от позиции на экране
+    const frequency = 200 + (x / window.innerWidth) * 1000 + (y / window.innerHeight) * 500;
+    const duration = 0.5;
+    
+    // Разные осцилляторы для разных "инструментов"
+    const types = ['sine', 'square', 'sawtooth', 'triangle'];
+    const type = types[Math.floor(Math.random() * types.length)];
+    
+    this.playSound(frequency, duration, type, 0.2);
+    
+    // Дополнительный звук для обертонов
+    setTimeout(() => {
+        this.playSound(frequency * 1.5, duration * 0.7, type, 0.1);
+    }, 50);
 }
 
 recordBeat() {
@@ -722,9 +780,9 @@ checkBeatPattern() {
 
 activateDrumMode() {
     console.log('🥁 Drum Mode Activated!');
-    this.showEasterEggMessage('🥁 Drum Mode! Nice rhythm!', 'drum');
+    this.showEasterEggMessage('🥁 Drum Mode! Click drums!', 'drum');
     
-    // Создаем виртуальные барабаны
+    // Создаем виртуальные барабаны со звуками
     this.createVirtualDrums();
 }
 
@@ -736,50 +794,116 @@ createVirtualDrums() {
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0,0,0,0.8);
-        padding: 15px;
+        background: rgba(0,0,0,0.9);
+        padding: 20px;
         border-radius: 15px;
         z-index: 10000;
         display: flex;
-        gap: 10px;
+        gap: 15px;
+        border: 2px solid #ff6b6b;
     `;
     
-    const drumPads = ['🥁', '🎸', '🎹', '🎺', '🎻'];
-    drumPads.forEach((drum, index) => {
+    const drumSounds = [
+        { emoji: '🥁', freq: 150, type: 'sine' },    // Bass drum
+        { emoji: '🎸', freq: 300, type: 'square' },  // Snare
+        { emoji: '🎹', freq: 400, type: 'sine' },    // Hi-hat
+        { emoji: '🎺', freq: 500, type: 'sawtooth' }, // Tom
+        { emoji: '🎻', freq: 600, type: 'triangle' } // Cymbal
+    ];
+    
+    drumSounds.forEach((drum, index) => {
         const pad = document.createElement('div');
         pad.className = 'drum-pad';
-        pad.innerHTML = drum;
+        pad.innerHTML = drum.emoji;
         pad.style.cssText = `
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
             transition: all 0.1s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         `;
         
         pad.addEventListener('click', () => {
+            // Визуальная обратная связь
             pad.style.transform = 'scale(0.9)';
+            pad.style.background = 'linear-gradient(45deg, #ff4444, #22d3ee)';
+            
+            // Звук барабана
+            this.playDrumSound(drum.freq, drum.type);
+            
+            // Создаем звуковую волну
+            this.createSoundWave(pad);
+            
             setTimeout(() => {
                 pad.style.transform = 'scale(1)';
+                pad.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
             }, 100);
-            
-            // Создаем звуковой эффект (визуальный)
-            this.createSoundWave(pad);
+        });
+        
+        // Добавляем клавиши для барабанов (1-5)
+        document.addEventListener('keydown', (e) => {
+            if (e.code === `Digit${index + 1}`) {
+                pad.click();
+            }
         });
         
         drums.appendChild(pad);
     });
     
+    // Инструкция
+    const instruction = document.createElement('div');
+    instruction.style.cssText = `
+        color: white;
+        text-align: center;
+        margin-top: 10px;
+        font-size: 0.8rem;
+        opacity: 0.8;
+    `;
+    instruction.textContent = 'Press 1-5 or click drums!';
+    drums.appendChild(instruction);
+    
     document.body.appendChild(drums);
     
     setTimeout(() => {
         if (drums.parentNode) drums.remove();
-    }, 10000);
+        this.showEasterEggMessage('🥁 Drum Mode Ended', 'drum');
+    }, 15000);
+}
+playDrumSound(frequency, type) {
+    if (!this.audioContext) return;
+    
+    try {
+        // Основной звук
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        oscillator.type = type;
+        oscillator.frequency.value = frequency;
+        
+        // Энвелопа для барабанного звука
+        gainNode.gain.setValueAtTime(0.5, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+        
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.3);
+        
+        // Шум для атаки
+        setTimeout(() => {
+            this.playSound(frequency * 2, 0.1, 'square', 0.1);
+        }, 10);
+        
+    } catch (error) {
+        console.warn('🔇 Drum sound error:', error);
+    }
 }
 
 createSoundWave(element) {
@@ -1061,19 +1185,80 @@ initVoiceCommands() {
 activateKonamiCode() {
     console.log('🎉 Konami Code Activated!');
     
-    // Создаем эффект конфетти
+    // Звуковая последовательность для кода Конами
+    this.playSoundSequence([523, 587, 659, 698, 784, 880, 988, 1047]);
+    
     this.createConfetti();
-    
-    // Меняем тему на ретро-игровую
     document.body.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7)';
-    document.body.style.backgroundSize = '400% 400%';
-    document.body.style.animation = 'gradientShift 3s ease infinite';
-    
-    // Показываем сообщение
     this.showEasterEggMessage('🎮 Konami Code Activated! +30 Lives!', 'retro');
+}
+
+activateGodMode() {
+    console.log('🌟 God Mode Activated!');
     
-    // Добавляем ретро-звук (если нужно)
-    this.playRetroSound();
+    // Эпический аккорд
+    this.playChord([261, 329, 392, 523]); // C major chord
+    
+    const cards = document.querySelectorAll('.glass-card');
+    cards.forEach(card => {
+        card.style.background = 'linear-gradient(45deg, rgba(255,215,0,0.3), rgba(255,193,7,0.2))';
+        card.style.borderColor = 'gold';
+        card.style.boxShadow = '0 0 30px gold';
+    });
+    
+    this.showEasterEggMessage('🌟 GOD MODE ACTIVATED! Unlimited Power!', 'god');
+    this.addGodCursor();
+}
+
+activateRickroll() {
+    console.log('🎵 Never gonna give you up!');
+    
+    // Начальные ноты песни
+    this.playSoundSequence([392, 440, 494, 523, 587, 659, 698, 784]);
+    
+    const video = document.createElement('div');
+    video.className = 'rickroll-video';
+    video.innerHTML = `
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                   background: black; padding: 20px; border-radius: 15px; z-index: 10000; text-align: center;">
+            <div style="color: white; margin-bottom: 10px; font-size: 1.2rem;">🎵 Never gonna give you up! 🎵</div>
+            <audio id="rickrollAudio" controls autoplay style="margin-bottom: 15px;">
+                <source src="https://www.soundjay.com/misc/sounds/fail-buzzer-02.wav" type="audio/wav">
+            </audio>
+            <br>
+            <button onclick="this.parentElement.parentElement.remove(); document.getElementById('rickrollAudio')?.pause();" 
+                    style="margin-top: 10px; padding: 8px 16px; background: #ff4444; color: white; 
+                           border: none; border-radius: 5px; cursor: pointer;">
+                ❌ Close
+            </button>
+        </div>
+    `;
+    document.body.appendChild(video);
+    
+    this.showEasterEggMessage('🎵 Never gonna give you up!', 'rickroll');
+}
+
+// Вспомогательные методы для звуков
+playSoundSequence(frequencies, interval = 150) {
+    frequencies.forEach((freq, index) => {
+        setTimeout(() => {
+            this.playSound(freq, 0.3, 'sine', 0.2);
+        }, index * interval);
+    });
+}
+
+playChord(frequencies) {
+    frequencies.forEach(freq => {
+        this.playSound(freq, 1.0, 'sine', 0.15);
+    });
+}
+
+playErrorSound() {
+    this.playSoundSequence([220, 196, 185, 175], 100);
+}
+
+playSuccessSound() {
+    this.playSoundSequence([523, 659, 784], 200);
 }
 
 activateGodMode() {
@@ -1345,18 +1530,19 @@ showNotification(message, type = 'info') {
 
         // Быстрые примеры
         if (this.exampleChips.length > 0) {
-            this.exampleChips.forEach(chip => {
-                chip.addEventListener('click', () => {
-                    const exampleText = chip.getAttribute('data-example');
-                    console.log('💡 Example chip clicked:', exampleText);
-                    if (this.searchInput) {
-                        this.searchInput.value = exampleText;
-                        this.autoResizeTextarea.call(this.searchInput);
-                    }
-                    this.handleSearch();
-                });
+        this.exampleChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                this.playSound(659, 0.1, 'sine', 0.1);
+                const exampleText = chip.getAttribute('data-example');
+                console.log('💡 Example chip clicked:', exampleText);
+                if (this.searchInput) {
+                    this.searchInput.value = exampleText;
+                    this.autoResizeTextarea.call(this.searchInput);
+                }
+                this.handleSearch();
             });
-        }
+        });
+    }
 
         console.log('🎯 Event listeners attached');
     }
@@ -1397,6 +1583,22 @@ showNotification(message, type = 'info') {
         this.showError(error.message);
     } finally {
         this.setLoading(false);
+    }
+}
+
+safePlaySound(frequency, duration, type = 'sine', volume = 0.3) {
+    if (!this.audioContext) {
+        this.initAudioSystem();
+        if (!this.audioContext) return;
+    }
+    
+    // Если контекст приостановлен (браузерная политика)
+    if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume().then(() => {
+            this.playSound(frequency, duration, type, volume);
+        });
+    } else {
+        this.playSound(frequency, duration, type, volume);
     }
 }
 
