@@ -257,14 +257,14 @@ activateGodMode() {
 }
 
 showJesusImage() {
-    console.log('🖼️ Showing Jesus image from local folder...');
+    console.log('🖼️ Showing Jesus PNG image...');
     
     const jesusContainer = document.createElement('div');
     jesusContainer.className = 'jesus-container';
     jesusContainer.style.cssText = `
         position: fixed;
         top: 50%;
-        left: -300px; /* Начинаем слева за экраном */
+        left: -300px;
         transform: translateY(-50%);
         z-index: 10001;
         animation: jesusSlideIn 1s ease-out forwards;
@@ -273,16 +273,65 @@ showJesusImage() {
         font-family: Arial, sans-serif;
     `;
     
-    // Используем локальный файл из папки images
-    jesusContainer.innerHTML = `
-        <div style="animation: jesusFloat 3s ease-in-out infinite;">
-            <img src="./images/jesus.png" 
-                 alt="Jesus" 
-                 style="width: 250px; height: 250px; border-radius: 15px; 
-                        border: 4px solid gold; box-shadow: 0 0 50px gold;
-                        object-fit: cover; background: white;"
-                 onerror="this.onerror=null; this.src='./images/jesus.png';">
-        </div>
+    // Список возможных имен PNG файлов
+    const pngNames = [
+        './images/jesus.png',
+        './images/jesus-meme.png', 
+        './images/jesus_christ.png',
+        './images/Jesus.png',
+        './images/god.png',
+        './images/christ.png'
+    ];
+    
+    const img = document.createElement('img');
+    img.alt = "Jesus";
+    img.style.cssText = `
+        width: 250px; 
+        height: 250px; 
+        border-radius: 15px; 
+        border: 4px solid gold; 
+        box-shadow: 0 0 50px gold;
+        object-fit: cover; 
+        background: white;
+    `;
+    
+    let currentImageIndex = 0;
+    
+    img.onload = function() {
+        console.log(`✅ PNG image loaded: ${pngNames[currentImageIndex]}`);
+    };
+    
+    img.onerror = function() {
+        console.log(`❌ PNG image failed: ${pngNames[currentImageIndex]}`);
+        currentImageIndex++;
+        if (currentImageIndex < pngNames.length) {
+            this.src = pngNames[currentImageIndex];
+            console.log(`🔄 Trying: ${pngNames[currentImageIndex]}`);
+        } else {
+            console.log('❌ All PNGs failed, using emoji');
+            this.style.display = 'none';
+            const emojiFallback = document.createElement('div');
+            emojiFallback.innerHTML = '👼';
+            emojiFallback.style.cssText = `
+                font-size: 120px; 
+                animation: jesusFloat 3s ease-in-out infinite;
+                filter: drop-shadow(0 0 20px gold);
+            `;
+            this.parentElement.appendChild(emojiFallback);
+        }
+    };
+    
+    // Начинаем загрузку с первого PNG
+    img.src = pngNames[0];
+    
+    const imageContainer = document.createElement('div');
+    imageContainer.style.cssText = 'animation: jesusFloat 3s ease-in-out infinite;';
+    imageContainer.appendChild(img);
+    
+    jesusContainer.appendChild(imageContainer);
+    
+    const textDiv = document.createElement('div');
+    textDiv.innerHTML = `
         <div style="color: gold; font-size: 1.8rem; font-weight: bold; margin-top: 15px;
                    text-shadow: 0 0 20px gold, 0 0 40px orange;">
             🙏 GOD MODE 🙏
@@ -291,20 +340,15 @@ showJesusImage() {
             Divine Power!
         </div>
     `;
+    jesusContainer.appendChild(textDiv);
     
     document.body.appendChild(jesusContainer);
-    console.log('✅ Jesus container added to DOM');
     
-    // Убираем через 5 секунд с выездом обратно
     setTimeout(() => {
         if (jesusContainer.parentNode) {
-            console.log('🕒 Removing Jesus image...');
             jesusContainer.style.animation = 'jesusSlideOut 1s ease-in forwards';
             setTimeout(() => {
-                if (jesusContainer.parentNode) {
-                    jesusContainer.remove();
-                    console.log('✅ Jesus image removed');
-                }
+                if (jesusContainer.parentNode) jesusContainer.remove();
             }, 1000);
         }
     }, 5000);
