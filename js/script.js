@@ -22,7 +22,6 @@ class GameFinderApp {
     try {
         this.initDOMElements();
         this.initEventListeners();
-        this.initCurrencyDropdown();
         this.createParticles();
         this.createStars();
         this.createStarShower();
@@ -2132,69 +2131,7 @@ safePlaySound(frequency, duration, type = 'sine', volume = 0.3) {
         }
     }
 
-    initCurrencyDropdown() {
-        const currencyToggle = document.getElementById('currencyToggle');
-        const currencyMenu = document.querySelector('.currency-dropdown-menu');
-        const currencyOptions = document.querySelectorAll('.currency-option');
-        const currentCurrencySymbol = document.getElementById('currentCurrencySymbol');
-        
-        if (currencyToggle && currencyMenu) {
-            currencyToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                currencyMenu.classList.toggle('show');
-                currencyToggle.classList.toggle('active');
-            });
-            
-            currencyOptions.forEach(option => {
-                option.addEventListener('click', (e) => {
-                    const currency = option.getAttribute('data-currency');
-                    const symbol = option.querySelector('.currency-symbol').textContent;
-                    
-                    this.changeCurrency(currency);
-                    
-                    currentCurrencySymbol.textContent = symbol;
-                    
-                    currencyOptions.forEach(opt => opt.classList.remove('active'));
-                    option.classList.add('active');
-                    
-                    currencyMenu.classList.remove('show');
-                    currencyToggle.classList.remove('active');
-                    
-                    currencyToggle.classList.add('currency-spin');
-                    setTimeout(() => {
-                        currencyToggle.classList.remove('currency-spin');
-                    }, 600);
-                });
-            });
-            
-            document.addEventListener('click', (e) => {
-                if (!currencyToggle.contains(e.target) && !currencyMenu.contains(e.target)) {
-                    currencyMenu.classList.remove('show');
-                    currencyToggle.classList.remove('active');
-                }
-            });
-            
-            this.initCurrentCurrency();
-        }
-    }
-
-    initCurrentCurrency() {
-        const savedCurrency = this.priceAPI.getSavedCurrency() || 'USD';
-        const currencyOptions = document.querySelectorAll('.currency-option');
-        const currentCurrencySymbol = document.getElementById('currentCurrencySymbol');
-        
-        currencyOptions.forEach(option => {
-            if (option.getAttribute('data-currency') === savedCurrency) {
-                option.classList.add('active');
-                const symbol = option.querySelector('.currency-symbol').textContent;
-                currentCurrencySymbol.textContent = symbol;
-            }
-        });
-    }
-
-    async changeCurrency(currency) {
-        this.priceAPI.setCurrency(currency);
-    }
+   
 
     setupNavigation() {
         const navButtons = document.querySelectorAll('.nav-btn[href^="#"]');
