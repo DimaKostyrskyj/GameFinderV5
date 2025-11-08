@@ -3763,3 +3763,81 @@ input:focus, textarea:focus, select:focus {
         box-shadow: 0 0 60px gold, 0 0 80px orange;
     }
 }
+/* Анимации для появления Иисуса */
+@keyframes jesusAppear {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5) rotate(-180deg);
+        opacity: 0;
+        filter: blur(20px);
+    }
+    60% {
+        transform: translate(-50%, -50%) scale(1.1) rotate(0deg);
+        opacity: 1;
+        filter: blur(0px);
+    }
+    80% {
+        transform: translate(-50%, -50%) scale(0.95) rotate(5deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        opacity: 1;
+        filter: blur(0px);
+    }
+}
+
+@keyframes jesusDisappear {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+    }
+}
+
+@keyframes jesusGlow {
+    0% {
+        box-shadow: 0 0 20px gold, 0 0 40px gold;
+        transform: scale(1);
+    }
+    100% {
+        box-shadow: 0 0 40px gold, 0 0 80px orange, 0 0 120px yellow;
+        transform: scale(1.05);
+    }
+}
+
+/* Дополнительные божественные эффекты */
+.jesus-container {
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+}
+@keyframes haloSpin {
+    0% {
+        transform: translateX(-50%) rotate(0deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(-50%) rotate(360deg);
+        opacity: 0.8;
+    }
+}
+
+@keyframes holyFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow: 0 0 10px gold;
+        transform: scale(1);
+    }
+    100% {
+        text-shadow: 0 0 20px gold, 0 0 30px orange;
+        transform: scale(1.05);
+    }
+}
