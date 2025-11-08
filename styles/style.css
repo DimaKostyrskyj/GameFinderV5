@@ -4649,3 +4649,78 @@ input:focus, textarea:focus, select:focus {
         font-size: 1.1rem;
     }
 }
+/* Стили для блока отзывов */
+.game-reviews {
+    margin: 15px 0;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.review-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.review-percent {
+    font-size: 1.5rem;
+    font-weight: 700;
+    min-width: 50px;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.review-info {
+    flex: 1;
+}
+
+.review-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2px;
+}
+
+.review-count {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.review-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.review-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 8px currentColor;
+}
+
+/* Анимация для заполнения бара */
+@keyframes fillReviewBar {
+    from { width: 0%; }
+    to { width: var(--review-width); }
+}
+
+.review-fill {
+    animation: fillReviewBar 1.5s ease-out forwards;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .review-stats {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .review-percent {
+        font-size: 1.3rem;
+    }
+}

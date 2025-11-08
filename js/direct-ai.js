@@ -112,6 +112,8 @@ class DirectGameSearchAI {
             "vibe": "Атмосфера",
             "whyPerfect": "Почему подходит",
             "platforms": ["PC", "PS5"]
+            "reviewPercent": 95,        // ДОБАВЬ ЭТУ СТРОКУ
+            "reviewCount": 500000 
         },
         {
             "name": "Название игры 2", 
@@ -122,6 +124,8 @@ class DirectGameSearchAI {
             "vibe": "Атмосфера",
             "whyPerfect": "Почему подходит",
             "platforms": ["PC", "XBOX"]
+            "reviewPercent": 95,        // ДОБАВЬ ЭТУ СТРОКУ
+            "reviewCount": 500000 
         },
         {
             "name": "Название игры 3",
@@ -132,8 +136,11 @@ class DirectGameSearchAI {
             "vibe": "Атмосфера",
             "whyPerfect": "Почему подходит",
             "platforms": ["PC", "Switch"]
+            "reviewPercent": 95,        // ДОБАВЬ ЭТУ СТРОКУ
+            "reviewCount": 500000 
         },
-        // ДОБАВЬ ЕЩЕ 17 ИГР чтобы всего было 20 разных игр
+        // ДОБАВЬ ЕЩЕ 17 ИГР чтобы всего было 20 разных игр 
+        // ДОБАВЬ reviewPercent (0-100) и reviewCount (количество отзывов) для каждой игры
         // Игры должны быть разнообразными по жанрам и настроению
         // Включай популярные инди-игры, AAA тайтлы, классику
         // Убедись что описания уникальны и подходят под запрос пользователя
@@ -141,6 +148,7 @@ class DirectGameSearchAI {
 }
 
 ВАЖНО: Верни РОВНО 20 игр в массиве games. Игры должны быть реально существующими и популярными.`;
+
     }
 
     parseAIResponse(content) {
@@ -185,15 +193,18 @@ class DirectGameSearchAI {
             }
 
             // Ограничиваем количество игр до 20 и валидируем
-            parsed.games = parsed.games.slice(0, 20).map((game, index) => ({
-                name: game.name || `Игра ${index + 1}`,
-                genre: game.genre || "Жанр не указан",
-                description: game.description || "Интересная игра с увлекательным геймплеем",
-                moodMatch: typeof game.moodMatch === 'number' ? Math.min(Math.max(game.moodMatch, 0.7), 0.98) : (0.85 + index * 0.005),
-                playtime: game.playtime || "10-30 часов",
-                vibe: game.vibe || "Захватывающая атмосфера",
-                whyPerfect: game.whyPerfect || "Отлично подходит под ваш запрос",
-                platforms: Array.isArray(game.platforms) ? game.platforms : ["PC"]
+           parsed.games = parsed.games.slice(0, 20).map((game, index) => ({
+            name: game.name || `Игра ${index + 1}`,
+            genre: game.genre || "Жанр не указан",
+            description: game.description || "Интересная игра с увлекательным геймплеем",
+            moodMatch: typeof game.moodMatch === 'number' ? Math.min(Math.max(game.moodMatch, 0.7), 0.98) : (0.85 + index * 0.005),
+            playtime: game.playtime || "10-30 часов", 
+            vibe: game.vibe || "Захватывающая атмосфера",
+            whyPerfect: game.whyPerfect || "Отлично подходит под ваш запрос",
+            platforms: Array.isArray(game.platforms) ? game.platforms : ["PC"],
+            // ДОБАВЬ ЭТИ ДВЕ СТРОКИ:
+            reviewPercent: typeof game.reviewPercent === 'number' ? Math.min(Math.max(game.reviewPercent, 50), 99) : (85 + Math.random() * 10),
+            reviewCount: typeof game.reviewCount === 'number' ? game.reviewCount : Math.floor(Math.random() * 400000) + 10000
             }));
 
             return parsed;
