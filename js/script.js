@@ -1264,7 +1264,9 @@ playSuccessSound() {
 activateGodMode() {
     console.log('🌟 God Mode Activated!');
     
-    // Делаем все карточки золотыми
+    // Мемные божественные звуки
+    this.playGodModeSounds();
+    
     const cards = document.querySelectorAll('.glass-card');
     cards.forEach(card => {
         card.style.background = 'linear-gradient(45deg, rgba(255,215,0,0.3), rgba(255,193,7,0.2))';
@@ -1273,9 +1275,227 @@ activateGodMode() {
     });
     
     this.showEasterEggMessage('🌟 GOD MODE ACTIVATED! Unlimited Power!', 'god');
-    
-    // Добавляем сияющий эффект курсору
     this.addGodCursor();
+    
+    // Добавляем божественные частицы
+    this.createGodParticles();
+}
+
+playGodModeSounds() {
+    if (!this.audioContext) return;
+    
+    try {
+        // 1. Звук хора ангелов (мемный)
+        this.playAngelChoir();
+        
+        // 2. Звук божественного сияния
+        setTimeout(() => {
+            this.playDivineSparkle();
+        }, 500);
+        
+        // 3. Эпичный бас-дроп (мем)
+        setTimeout(() => {
+            this.playEpicBassDrop();
+        }, 1000);
+        
+        // 4. Звук небесных врат
+        setTimeout(() => {
+            this.playHeavenlyGates();
+        }, 1500);
+        
+    } catch (error) {
+        console.warn('🔇 God mode sound error:', error);
+    }
+}
+
+playAngelChoir() {
+    // Хор ангелов (мемная версия)
+    const frequencies = [329, 392, 440, 523, 659]; // E4, G4, A4, C5, E5
+    const types = ['sine', 'triangle'];
+    
+    frequencies.forEach((freq, index) => {
+        setTimeout(() => {
+            const type = types[index % types.length];
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = type;
+            oscillator.frequency.value = freq;
+            
+            // Плавное нарастание и затухание как у хора
+            gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.2, this.audioContext.currentTime + 0.5);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 2);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + 2);
+            
+        }, index * 100);
+    });
+}
+
+playDivineSparkle() {
+    // Божественное сияние (звонкие высокие частоты)
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+            const freq = 1000 + Math.random() * 1000;
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = freq;
+            
+            gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.3);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + 0.3);
+            
+        }, i * 50);
+    }
+}
+
+playEpicBassDrop() {
+    // Эпичный бас-дроп (мемный)
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
+    
+    oscillator.type = 'sawtooth';
+    
+    // Падение частоты для эффекта "дропа"
+    oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(50, this.audioContext.currentTime + 1);
+    
+    gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 1.5);
+    
+    oscillator.start(this.audioContext.currentTime);
+    oscillator.stop(this.audioContext.currentTime + 1.5);
+    
+    // Добавляем шум для мощности
+    setTimeout(() => {
+        this.playSound(80, 0.5, 'square', 0.2);
+    }, 200);
+}
+
+playHeavenlyGates() {
+    // Звук открывающихся небесных врат
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
+    
+    oscillator.type = 'sine';
+    
+    // Медленное нарастание как открывающиеся врата
+    oscillator.frequency.setValueAtTime(100, this.audioContext.currentTime);
+    oscillator.frequency.linearRampToValueAtTime(400, this.audioContext.currentTime + 2);
+    
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.25, this.audioContext.currentTime + 1);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 3);
+    
+    oscillator.start(this.audioContext.currentTime);
+    oscillator.stop(this.audioContext.currentTime + 3);
+}
+
+createGodParticles() {
+    // Создаем божественные частицы
+    const particleContainer = document.createElement('div');
+    particleContainer.className = 'god-particles';
+    particleContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9998;
+    `;
+    
+    document.body.appendChild(particleContainer);
+    
+    // Создаем частицы в форме нимба
+    this.createHaloParticles(particleContainer);
+    
+    // Удаляем через 5 секунд
+    setTimeout(() => {
+        if (particleContainer.parentNode) {
+            particleContainer.remove();
+        }
+    }, 5000);
+}
+
+createHaloParticles(container) {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const radius = 100;
+    
+    // Создаем нимб из частиц
+    for (let i = 0; i < 24; i++) {
+        const angle = (i / 24) * Math.PI * 2;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        
+        const particle = document.createElement('div');
+        particle.className = 'halo-particle';
+        particle.style.cssText = `
+            position: fixed;
+            left: ${x}px;
+            top: ${y}px;
+            width: 8px;
+            height: 8px;
+            background: gold;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: haloFloat 3s ease-in-out infinite;
+            animation-delay: ${i * 0.1}s;
+            box-shadow: 0 0 10px gold, 0 0 20px gold;
+        `;
+        
+        container.appendChild(particle);
+    }
+    
+    // Добавляем случайные божественные частицы
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            this.createFloatingParticle(container);
+        }, i * 100);
+    }
+}
+
+createFloatingParticle(container) {
+    const particle = document.createElement('div');
+    const colors = ['gold', '#ffd700', '#fffacd', '#ffff00'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    particle.className = 'floating-particle';
+    particle.style.cssText = `
+        position: fixed;
+        left: ${Math.random() * window.innerWidth}px;
+        top: ${Math.random() * window.innerHeight}px;
+        width: ${Math.random() * 6 + 4}px;
+        height: ${Math.random() * 6 + 4}px;
+        background: ${color};
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        animation: floatDivine ${Math.random() * 3 + 2}s ease-in-out infinite;
+        box-shadow: 0 0 8px ${color};
+    `;
+    
+    container.appendChild(particle);
 }
 
 activateSecretSearch() {
