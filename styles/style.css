@@ -4724,3 +4724,75 @@ input:focus, textarea:focus, select:focus {
         font-size: 1.3rem;
     }
 }
+/* Стили для заголовка с джойстиком по центру */
+.games-grid h3 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    letter-spacing: -0.5px;
+}
+
+/* Анимация джойстика */
+.games-grid h3::before {
+    content: '🎮';
+    font-size: 2.8rem;
+    filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.5));
+    animation: joystickBounce 2s ease-in-out infinite;
+}
+
+@keyframes joystickBounce {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-5px) rotate(-8deg);
+    }
+    50% {
+        transform: translateY(0) rotate(8deg);
+    }
+    75% {
+        transform: translateY(-3px) rotate(-4deg);
+    }
+}
+
+/* Подчеркивание */
+.games-grid h3::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .games-grid h3 {
+        font-size: 2.2rem;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .games-grid h3::before {
+        font-size: 2.2rem;
+    }
+    
+    .games-grid h3::after {
+        width: 80px;
+    }
+}
