@@ -640,20 +640,21 @@ createMusicCircle(e) {
     
     circle.style.cssText = `
         position: fixed;
-        left: ${e.clientX}px;
-        top: ${e.clientY}px;
+        left: ${e.clientX}px;    // Позиция клика
+        top: ${e.clientY}px;     // Позиция клика  
         width: 0;
         height: 0;
         border-radius: 50%;
-        background: ${color};
+        background: ${color};    // Случайный цвет
         transform: translate(-50%, -50%);
-        animation: musicPulse 1s ease-out;
+        animation: musicPulse 1s ease-out;  // Анимация пульсации
         pointer-events: none;
         z-index: 9999;
     `;
     
     document.body.appendChild(circle);
     
+    // Автоматически удаляем через 1 секунду
     setTimeout(() => {
         if (circle.parentNode) circle.remove();
     }, 1000);
