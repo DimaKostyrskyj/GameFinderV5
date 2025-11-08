@@ -257,7 +257,6 @@ activateGodMode() {
 }
 
 showJesusImage() {
-    // Создаем контейнер для изображения Иисуса
     const jesusContainer = document.createElement('div');
     jesusContainer.className = 'jesus-container';
     jesusContainer.style.cssText = `
@@ -268,20 +267,23 @@ showJesusImage() {
         z-index: 10001;
         animation: jesusAppear 2s ease-out forwards;
         pointer-events: none;
+        text-align: center;
+        font-family: Arial, sans-serif;
     `;
     
-    // Используем мемное изображение Иисуса (можно заменить на свою ссылку)
-   jesusContainer.innerHTML = `
-    <div style="text-align: center;">
-        <img src="./images/jesus-meme.png" 
-             alt="Jesus" 
-             style="width: 200px; height: 200px; border-radius: 50%; 
-                    border: 4px solid gold; box-shadow: 0 0 50px gold;">
-        <div style="color: gold; font-size: 1.5rem; font-weight: bold; margin-top: 10px;">
-            🙏 BEHOLD! 🙏
+    // Используем emoji вместо изображения
+    jesusContainer.innerHTML = `
+        <div style="font-size: 120px; animation: jesusFloat 3s ease-in-out infinite;">
+            👼
         </div>
-    </div>
-`;
+        <div style="color: gold; font-size: 2rem; font-weight: bold; margin-top: 20px;
+                   text-shadow: 0 0 20px gold, 0 0 40px orange;">
+            🙏 GOD MODE 🙏
+        </div>
+        <div style="color: #ffd700; font-size: 1.2rem; margin-top: 10px;">
+            Divine Power Activated!
+        </div>
+    `;
     
     document.body.appendChild(jesusContainer);
     
