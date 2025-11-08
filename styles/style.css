@@ -3370,7 +3370,6 @@ input:focus, textarea:focus, select:focus {
     cursor: not-allowed;
     transform: none !important;
 }
-/* Эффект падающих звезд */
 .stars-container {
     position: fixed;
     top: 0;
@@ -3384,28 +3383,26 @@ input:focus, textarea:focus, select:focus {
 
 .star {
     position: absolute;
-    background: linear-gradient(90deg, 
-        rgba(255, 255, 255, 0) 0%, 
-        rgba(255, 255, 255, 1) 50%, 
-        rgba(255, 255, 255, 0) 100%);
+    background: white;
     border-radius: 50%;
-    filter: blur(1px);
+    filter: blur(0.5px);
     opacity: 0;
+    animation-timing-function: linear;
 }
 
 .star.small {
+    width: 1px;
+    height: 1px;
+}
+
+.star.medium {
     width: 2px;
     height: 2px;
 }
 
-.star.medium {
+.star.large {
     width: 3px;
     height: 3px;
-}
-
-.star.large {
-    width: 4px;
-    height: 4px;
 }
 
 /* Анимации для звезд */
@@ -3462,29 +3459,47 @@ input:focus, textarea:focus, select:focus {
 
 /* Цветовые вариации звезд */
 .star.color-blue {
-    background: linear-gradient(90deg, 
-        rgba(14, 165, 233, 0) 0%, 
-        rgba(14, 165, 233, 1) 50%, 
-        rgba(14, 165, 233, 0) 100%);
+    background: #0ea5e9;
 }
 
 .star.color-purple {
-    background: linear-gradient(90deg, 
-        rgba(139, 92, 246, 0) 0%, 
-        rgba(139, 92, 246, 1) 50%, 
-        rgba(139, 92, 246, 0) 100%);
+    background: #8b5cf6;
 }
 
 .star.color-gold {
-    background: linear-gradient(90deg, 
-        rgba(255, 215, 0, 0) 0%, 
-        rgba(255, 215, 0, 1) 50%, 
-        rgba(255, 215, 0, 0) 100%);
+    background: #fbbf24;
 }
 
 .star.color-pink {
-    background: linear-gradient(90deg, 
-        rgba(255, 105, 180, 0) 0%, 
-        rgba(255, 105, 180, 1) 50%, 
-        rgba(255, 105, 180, 0) 100%);
+    background: #ec4899;
+}
+
+.star.color-cyan {
+    background: #22d3ee;
+}
+
+/* Убедимся что градиентный фон работает */
+.animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #5a67d8, #3c35a0, #910f52, #a5185c);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    z-index: -3;
+}
+
+/* Гарантируем правильный порядок z-index */
+.animated-bg {
+    z-index: -3;
+}
+
+.particles-container {
+    z-index: -2;
+}
+
+.stars-container {
+    z-index: -1;
 }

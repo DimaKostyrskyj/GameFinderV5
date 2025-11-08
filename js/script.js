@@ -45,61 +45,47 @@ class GameFinderApp {
         });
     }
     createStars() {
-    const starsContainer = document.createElement('div');
-    starsContainer.className = 'stars-container';
-    document.body.appendChild(starsContainer);
+    const container = document.getElementById('stars');
+    if (!container) return;
 
-    // Создаем звезды
-    for (let i = 0; i < 40; i++) {
-        setTimeout(() => {
-            this.createStar(starsContainer);
-        }, i * 300); // Задержка между созданием звезд
+    const createStar = () => {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Случайный размер
+        const sizes = ['small', 'medium', 'large'];
+        const size = sizes[Math.floor(Math.random() * sizes.length)];
+        star.classList.add(size);
+        
+        // Случайный цвет
+        const colors = ['color-blue', 'color-purple', 'color-gold', 'color-pink', 'color-cyan', ''];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        if (color) star.classList.add(color);
+        
+        // Случайная анимация
+        const animations = ['starFall', 'starFallDiagonal', 'starFallReverse'];
+        const animation = animations[Math.floor(Math.random() * animations.length)];
+        
+        // Случайная позиция и длительность
+        const duration = Math.random() * 6 + 3; // 3-9 секунд
+        const delay = Math.random() * 2;
+        
+        star.style.cssText = `
+            top: ${Math.random() * 100}vh;
+            left: ${Math.random() * 100}vw;
+            animation: ${animation} ${duration}s linear ${delay}s infinite;
+        `;
+        
+        container.appendChild(star);
+    };
+
+    // Создаем начальные звезды
+    for (let i = 0; i < 25; i++) {
+        setTimeout(createStar, i * 200);
     }
 
-    // Продолжаем создавать звезды каждые 2 секунды
-    setInterval(() => {
-        if (starsContainer.children.length < 50) {
-            this.createStar(starsContainer);
-        }
-    }, 2000);
-}
-
-createStar(container) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    
-    // Случайный размер
-    const sizes = ['small', 'medium', 'large'];
-    const size = sizes[Math.floor(Math.random() * sizes.length)];
-    star.classList.add(size);
-    
-    // Случайный цвет
-    const colors = ['color-blue', 'color-purple', 'color-gold', 'color-pink', ''];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    if (color) star.classList.add(color);
-    
-    // Случайная анимация
-    const animations = ['starFall', 'starFallDiagonal', 'starFallReverse'];
-    const animation = animations[Math.floor(Math.random() * animations.length)];
-    
-    // Случайная позиция и длительность
-    const duration = Math.random() * 8 + 4; // 4-12 секунд
-    const delay = Math.random() * 5;
-    
-    star.style.cssText = `
-        top: ${Math.random() * 100}vh;
-        left: ${Math.random() * 100}vw;
-        animation: ${animation} ${duration}s linear ${delay}s infinite;
-    `;
-    
-    container.appendChild(star);
-    
-    // Удаляем звезду после завершения анимации
-    setTimeout(() => {
-        if (star.parentNode === container) {
-            container.removeChild(star);
-        }
-    }, (duration + delay) * 1000);
+    // Продолжаем создавать звезды
+    setInterval(createStar, 1000);
 }
 
     initDiscordButtons() {
