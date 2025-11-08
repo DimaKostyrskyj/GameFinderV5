@@ -147,12 +147,7 @@ initSecretClicks() {
         });
     }
     
-    // Секретный клик по фону (правой кнопкой)
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        this.activateSecretMenu(e.clientX, e.clientY);
-    });
-    
+       
     // Секретный клик по заголовку
     const title = document.querySelector('.hero-title');
     if (title) {
