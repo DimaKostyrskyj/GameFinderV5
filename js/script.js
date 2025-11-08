@@ -271,14 +271,14 @@ showJesusImage() {
     `;
     
     // Используем мемное изображение Иисуса (можно заменить на свою ссылку)
-    jesusContainer.innerHTML = `
+   jesusContainer.innerHTML = `
     <div style="text-align: center;">
-        <img src="https://i.imgur.com/9Sfz0Qq.png" 
+        <img src="./images/jesus-meme.png" 
              alt="Jesus" 
              style="width: 200px; height: 200px; border-radius: 50%; 
                     border: 4px solid gold; box-shadow: 0 0 50px gold;">
         <div style="color: gold; font-size: 1.5rem; font-weight: bold; margin-top: 10px;">
-            🙏 HE IS RISEN! 🙏
+            🙏 BEHOLD! 🙏
         </div>
     </div>
 `;
