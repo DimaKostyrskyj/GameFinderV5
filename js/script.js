@@ -480,6 +480,14 @@ initEasterEggs() {
     let gameGodMode = [];
     const godModeSequence = ['KeyG', 'KeyO', 'KeyD'];
     
+    let rickroll = [];
+    const rickrollSequence = ['KeyR', 'KeyI', 'KeyC', 'KeyK'];
+    
+    let secretSearch = false;
+    let beatPattern = [];
+    let lastBeatTime = 0;
+    let mouseTrail = false;
+
     document.addEventListener('keydown', (e) => {
         // Конами код
         konamiCode.push(e.code);
@@ -501,17 +509,550 @@ initEasterEggs() {
             gameGodMode = [];
         }
         
+        // Rickroll код
+        rickroll.push(e.code);
+        if (rickroll.length > rickrollSequence.length) {
+            rickroll.shift();
+        }
+        if (JSON.stringify(rickroll) === JSON.stringify(rickrollSequence)) {
+            this.activateRickroll();
+            rickroll = [];
+        }
+        
         // Секретный поиск (нажать G затем F)
         if (e.code === 'KeyG') {
+            secretSearch = true;
             setTimeout(() => {
-                document.addEventListener('keydown', (fEvent) => {
-                    if (fEvent.code === 'KeyF') {
-                        this.activateSecretSearch();
-                    }
-                }, { once: true });
-            }, 1000);
+                secretSearch = false;
+            }, 2000);
+        }
+        if (secretSearch && e.code === 'KeyF') {
+            this.activateSecretSearch();
+            secretSearch = false;
+        }
+        
+        // Музыкальный режим
+        if (e.code === 'KeyM' && e.altKey) {
+            this.activateMusicMode();
+        }
+        
+        // Ритм-тапы
+        if (e.code === 'Space' && e.ctrlKey) {
+            this.recordBeat();
+        }
+        
+        // Тетрис на фоне
+        if (e.code === 'KeyT' && e.shiftKey) {
+            this.activateTetrisBackground();
+        }
+        
+        // Змейка
+        if (e.code === 'KeyS' && e.altKey) {
+            this.activateSnakeGame();
+        }
+        
+        // Режим неона
+        if (e.code === 'KeyN' && e.shiftKey) {
+            this.activateNeonMode();
+        }
+        
+        // Режим 8-бит
+        if (e.code === 'Digit8' && e.altKey) {
+            this.activate8BitMode();
+        }
+        
+        // Инвертирование цветов
+        if (e.code === 'KeyI' && e.ctrlKey) {
+            this.activateInvertMode();
+        }
+        
+        // След мыши
+        if (e.code === 'KeyP' && e.shiftKey) {
+            mouseTrail = !mouseTrail;
+            if (mouseTrail) {
+                this.activateMouseTrail();
+                this.showEasterEggMessage('✨ Mouse Trail!', 'trail');
+            }
+        }
+        
+        // Matrix Mode
+        if (e.ctrlKey && e.shiftKey && e.code === 'KeyM') {
+            this.activateMatrixMode();
+        }
+        
+        // Голосовые команды
+        if (e.code === 'KeyV' && e.altKey) {
+            this.initVoiceCommands();
         }
     });
+    
+    console.log('🎮 Easter eggs loaded! Try: ↑↑↓↓←→←→BA, GOD, RICK, and many more!');
+}
+
+// Добавьте эти методы в класс:
+
+activateRickroll() {
+    console.log('🎵 Never gonna give you up!');
+    
+    const video = document.createElement('div');
+    video.className = 'rickroll-video';
+    video.innerHTML = `
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                   background: black; padding: 20px; border-radius: 15px; z-index: 10000; text-align: center;">
+            <div style="color: white; margin-bottom: 10px; font-size: 1.2rem;">🎵 Never gonna give you up! 🎵</div>
+            <div style="color: #ccc; margin-bottom: 15px; font-size: 0.9rem;">Rick Astley - Never Gonna Give You Up</div>
+            <iframe width="300" height="169" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1" 
+                    frameborder="0" allow="autoplay; encrypted-media" style="border-radius: 8px;"></iframe>
+            <br>
+            <button onclick="this.parentElement.parentElement.remove()" 
+                    style="margin-top: 15px; padding: 8px 16px; background: #ff4444; color: white; 
+                           border: none; border-radius: 5px; cursor: pointer;">
+                ❌ Close
+            </button>
+        </div>
+    `;
+    document.body.appendChild(video);
+    
+    this.showEasterEggMessage('🎵 Never gonna give you up!', 'rickroll');
+}
+
+activateMusicMode() {
+    console.log('🎵 Music Mode Activated!');
+    
+    this.showEasterEggMessage('🎵 Music Mode! Click for beats!', 'music');
+    
+    // Клики создают музыкальные круги
+    const musicHandler = (e) => this.createMusicCircle(e);
+    document.addEventListener('click', musicHandler);
+    
+    // Отключаем через 30 секунд
+    setTimeout(() => {
+        document.removeEventListener('click', musicHandler);
+        this.showEasterEggMessage('🎵 Music Mode Ended', 'music');
+    }, 30000);
+}
+
+createMusicCircle(e) {
+    const circle = document.createElement('div');
+    circle.className = 'music-circle';
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#ff9ff3'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    circle.style.cssText = `
+        position: fixed;
+        left: ${e.clientX}px;
+        top: ${e.clientY}px;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: ${color};
+        transform: translate(-50%, -50%);
+        animation: musicPulse 1s ease-out;
+        pointer-events: none;
+        z-index: 9999;
+    `;
+    
+    document.body.appendChild(circle);
+    
+    setTimeout(() => {
+        if (circle.parentNode) circle.remove();
+    }, 1000);
+}
+
+recordBeat() {
+    const now = Date.now();
+    const timeDiff = lastBeatTime > 0 ? now - lastBeatTime : 0;
+    
+    if (timeDiff > 0 && timeDiff < 2000) {
+        beatPattern.push(timeDiff);
+        
+        // Создаем визуальную обратную связь
+        this.createBeatVisual();
+        
+        if (beatPattern.length >= 4) {
+            this.checkBeatPattern();
+        }
+    }
+    
+    lastBeatTime = now;
+    
+    // Сбрасываем если прошло много времени
+    setTimeout(() => {
+        if (Date.now() - lastBeatTime > 3000) {
+            beatPattern = [];
+        }
+    }, 3000);
+}
+
+createBeatVisual() {
+    const visual = document.createElement('div');
+    visual.className = 'beat-visual';
+    visual.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #ff6b6b;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-weight: bold;
+        z-index: 10000;
+        animation: beatFlash 0.3s ease;
+    `;
+    visual.textContent = `🥁 Beat ${beatPattern.length}`;
+    
+    document.body.appendChild(visual);
+    
+    setTimeout(() => {
+        if (visual.parentNode) visual.remove();
+    }, 1000);
+}
+
+checkBeatPattern() {
+    const isRegular = beatPattern.every((beat, i, arr) => 
+        i === 0 || Math.abs(beat - arr[0]) < 150
+    );
+    
+    if (isRegular) {
+        this.activateDrumMode();
+        beatPattern = [];
+    }
+}
+
+activateDrumMode() {
+    console.log('🥁 Drum Mode Activated!');
+    this.showEasterEggMessage('🥁 Drum Mode! Nice rhythm!', 'drum');
+    
+    // Создаем виртуальные барабаны
+    this.createVirtualDrums();
+}
+
+createVirtualDrums() {
+    const drums = document.createElement('div');
+    drums.className = 'virtual-drums';
+    drums.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.8);
+        padding: 15px;
+        border-radius: 15px;
+        z-index: 10000;
+        display: flex;
+        gap: 10px;
+    `;
+    
+    const drumPads = ['🥁', '🎸', '🎹', '🎺', '🎻'];
+    drumPads.forEach((drum, index) => {
+        const pad = document.createElement('div');
+        pad.className = 'drum-pad';
+        pad.innerHTML = drum;
+        pad.style.cssText = `
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        `;
+        
+        pad.addEventListener('click', () => {
+            pad.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                pad.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Создаем звуковой эффект (визуальный)
+            this.createSoundWave(pad);
+        });
+        
+        drums.appendChild(pad);
+    });
+    
+    document.body.appendChild(drums);
+    
+    setTimeout(() => {
+        if (drums.parentNode) drums.remove();
+    }, 10000);
+}
+
+createSoundWave(element) {
+    const wave = document.createElement('div');
+    wave.className = 'sound-wave';
+    const rect = element.getBoundingClientRect();
+    
+    wave.style.cssText = `
+        position: fixed;
+        left: ${rect.left + rect.width / 2}px;
+        top: ${rect.top + rect.height / 2}px;
+        width: 10px;
+        height: 10px;
+        border: 2px solid #4ecdc4;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        animation: soundWave 1s ease-out;
+    `;
+    
+    document.body.appendChild(wave);
+    
+    setTimeout(() => {
+        if (wave.parentNode) wave.remove();
+    }, 1000);
+}
+
+activateTetrisBackground() {
+    console.log('🎮 Tetris Background Activated!');
+    
+    const tetrisContainer = document.createElement('div');
+    tetrisContainer.className = 'tetris-background';
+    tetrisContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -2;
+        opacity: 0.1;
+    `;
+    
+    // Создаем падающие блоки тетриса
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+            this.createTetrisBlock(tetrisContainer);
+        }, i * 800);
+    }
+    
+    document.body.appendChild(tetrisContainer);
+    this.showEasterEggMessage('🎮 Tetris Background!', 'tetris');
+    
+    setTimeout(() => {
+        if (tetrisContainer.parentNode) tetrisContainer.remove();
+    }, 20000);
+}
+
+createTetrisBlock(container) {
+    const block = document.createElement('div');
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#ff9ff3'];
+    
+    block.className = 'tetris-block';
+    block.style.cssText = `
+        position: absolute;
+        left: ${Math.random() * 100}vw;
+        top: -50px;
+        width: 30px;
+        height: 30px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        animation: tetrisFall ${Math.random() * 8 + 4}s linear forwards;
+        opacity: 0.4;
+        border-radius: 4px;
+    `;
+    
+    container.appendChild(block);
+    
+    setTimeout(() => {
+        if (block.parentNode === container) {
+            container.removeChild(block);
+        }
+    }, 12000);
+}
+
+activateSnakeGame() {
+    console.log('🐍 Snake Game Activated!');
+    
+    const snakeContainer = document.createElement('div');
+    snakeContainer.className = 'snake-game';
+    snakeContainer.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.95);
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid #00ff00;
+        z-index: 10000;
+        color: #00ff00;
+        font-family: 'Courier New', monospace;
+        text-align: center;
+    `;
+    
+    snakeContainer.innerHTML = `
+        <div style="font-size: 1.2rem; margin-bottom: 10px; text-shadow: 0 0 10px #00ff00;">🐍 SNAKE GAME</div>
+        <div style="width: 200px; height: 200px; background: #001100; 
+                   border: 1px solid #003300; margin: 0 auto; position: relative;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                       color: #005500; font-size: 0.8rem;">
+                Use WASD to move!<br>
+                (Coming Soon)
+            </div>
+        </div>
+        <button onclick="this.parentElement.remove()" 
+                style="margin-top: 15px; padding: 8px 16px; background: #00ff00; color: black; 
+                       border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            CLOSE
+        </button>
+    `;
+    
+    document.body.appendChild(snakeContainer);
+    this.showEasterEggMessage('🐍 Snake Game!', 'snake');
+}
+
+activateNeonMode() {
+    console.log('💡 Neon Mode Activated!');
+    
+    document.body.classList.add('neon-mode');
+    
+    const elements = document.querySelectorAll('.glass-card, .nav-btn, .search-btn, .game-card');
+    elements.forEach(el => {
+        const randomHue = Math.floor(Math.random() * 360);
+        el.style.boxShadow = `
+            0 0 10px hsl(${randomHue}, 100%, 50%),
+            0 0 20px hsl(${randomHue}, 100%, 50%),
+            0 0 40px hsl(${randomHue}, 100%, 50%)
+        `;
+        el.style.transition = 'all 0.3s ease';
+    });
+    
+    this.showEasterEggMessage('💡 Neon Mode! So bright!', 'neon');
+    
+    setTimeout(() => {
+        document.body.classList.remove('neon-mode');
+        elements.forEach(el => {
+            el.style.boxShadow = '';
+        });
+    }, 30000);
+}
+
+activate8BitMode() {
+    console.log('👾 8-Bit Mode Activated!');
+    
+    document.body.classList.add('eight-bit-mode');
+    
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        img.style.imageRendering = 'pixelated';
+        img.style.filter = 'contrast(150%) saturate(150%)';
+    });
+    
+    document.body.style.fontFamily = "'Courier New', monospace";
+    document.body.style.letterSpacing = '0px';
+    
+    this.showEasterEggMessage('👾 8-Bit Mode! Retro!', '8bit');
+    
+    setTimeout(() => {
+        document.body.classList.remove('eight-bit-mode');
+        images.forEach(img => {
+            img.style.imageRendering = '';
+            img.style.filter = '';
+        });
+        document.body.style.fontFamily = '';
+    }, 30000);
+}
+
+activateInvertMode() {
+    console.log('🔄 Invert Mode Activated!');
+    
+    document.body.classList.toggle('invert-mode');
+    
+    if (document.body.classList.contains('invert-mode')) {
+        this.showEasterEggMessage('🔄 Colors Inverted!', 'invert');
+    } else {
+        this.showEasterEggMessage('🔄 Colors Normal!', 'invert');
+    }
+}
+
+activateMouseTrail() {
+    console.log('✨ Mouse Trail Activated!');
+    
+    const trailHandler = (e) => {
+        for (let i = 0; i < 2; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.className = 'mouse-particle';
+                const size = Math.random() * 6 + 3;
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7'];
+                
+                particle.style.cssText = `
+                    position: fixed;
+                    left: ${e.clientX + (Math.random() * 20 - 10)}px;
+                    top: ${e.clientY + (Math.random() * 20 - 10)}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    animation: particleFloat ${Math.random() * 1.5 + 0.5}s ease-out forwards;
+                `;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    if (particle.parentNode) particle.remove();
+                }, 2000);
+            }, i * 50);
+        }
+    };
+    
+    document.addEventListener('mousemove', trailHandler);
+    
+    setTimeout(() => {
+        document.removeEventListener('mousemove', trailHandler);
+        this.showEasterEggMessage('✨ Mouse Trail Ended', 'trail');
+    }, 20000);
+}
+
+initVoiceCommands() {
+    if (!('webkitSpeechRecognition' in window)) {
+        this.showEasterEggMessage('🎤 Voice not supported', 'voice');
+        return;
+    }
+    
+    this.showEasterEggMessage('🎤 Listening... Say "hello"', 'voice');
+    
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        console.log('Voice command:', transcript);
+        
+        if (transcript.includes('hello')) {
+            this.showEasterEggMessage('🎤 Hello! Try "magic" or "colors"', 'voice');
+        }
+        
+        if (transcript.includes('magic') || transcript.includes('confetti')) {
+            this.createConfetti();
+            this.showEasterEggMessage('🎤 Magic!', 'voice');
+        }
+        
+        if (transcript.includes('color') || transcript.includes('rainbow')) {
+            this.activateRainbowMode();
+            this.showEasterEggMessage('🎤 Colors!', 'voice');
+        }
+        
+        if (transcript.includes('god mode')) {
+            this.activateGodMode();
+        }
+        
+        if (transcript.includes('music')) {
+            this.activateMusicMode();
+        }
+    };
+    
+    recognition.onerror = () => {
+        this.showEasterEggMessage('🎤 Voice error', 'voice');
+    };
+    
+    recognition.start();
     
     console.log('🎮 Easter eggs loaded! Try: ↑↑↓↓←→←→BA or GOD');
 }
