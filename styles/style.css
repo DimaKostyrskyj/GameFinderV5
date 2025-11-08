@@ -4805,3 +4805,401 @@ input:focus, textarea:focus, select:focus {
         width: 80px;
     }
 }
+/* Стили для красивого текста без контура */
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+    line-height: 1.2;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+/* Стили для кнопок Каталог и Купить игру */
+.action-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 15px 30px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.action-btn:hover::before {
+    left: 100%;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.action-btn-catalog {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.4);
+}
+
+.action-btn-buy {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.3) 0%, rgba(78, 205, 196, 0.3) 100%);
+    border: 1px solid rgba(255, 107, 107, 0.4);
+}
+
+.action-btn-icon {
+    font-size: 1.3rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Адаптивность для кнопок */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-btn {
+        width: 250px;
+        justify-content: center;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+}
+/* Стили для верхней панели */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 15px 0;
+}
+
+.header-content {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(20px);
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    margin: 0;
+    max-width: none;
+    width: 100%;
+}
+
+/* Логотип по центру */
+.logo-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.logo-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.logo-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    text-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Навигация слева и справа */
+.nav-left,
+.nav-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Стили для кнопок навигации */
+.nav-btn {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-icon {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.nav-text {
+    white-space: nowrap;
+}
+
+/* Особые стили для кнопок Каталог и Купить */
+.nav-btn-catalog {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.nav-btn-buy {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(78, 205, 196, 0.2) 100%);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 12px 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .logo-center {
+        position: static;
+        transform: none;
+        order: 1;
+        margin: 0 10px;
+    }
+    
+    .nav-left,
+    .nav-right {
+        order: 2;
+        justify-content: center;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .nav-btn {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+    
+    .logo-title {
+        font-size: 1.5rem;
+    }
+    
+    .logo-icon {
+        font-size: 1.7rem;
+    }
+}
+/* Прозрачный хедер без фона */
+.header-content {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Увеличиваем логотип */
+.logo-icon {
+    font-size: 2.8rem !important;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+}
+
+.logo-title {
+    font-size: 2.2rem !important;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Делаем кнопки более прозрачными */
+.nav-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Убираем особые градиенты для кнопок Каталог и Купить */
+.nav-btn-catalog,
+.nav-btn-buy {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Адаптивность для большого логотипа */
+@media (max-width: 768px) {
+    .logo-icon {
+        font-size: 2.2rem !important;
+    }
+    
+    .logo-title {
+        font-size: 1.8rem !important;
+    }
+    
+    .header-content {
+        padding: 15px 20px !important;
+    }
+}
+/* Стили для скролла хедера */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 15px 0;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Хедер при скролле */
+.header.scrolled {
+    padding: 8px 0;
+    background: rgba(15, 15, 25, 0.8);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Логотип остается наверху */
+.logo-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: all 0.4s ease;
+}
+
+/* Логотип при скролле */
+.header.scrolled .logo-center {
+    transform: translateX(-50%) scale(0.9);
+}
+
+.header.scrolled .logo-icon {
+    font-size: 2.2rem !important;
+}
+
+.header.scrolled .logo-title {
+    font-size: 1.8rem !important;
+}
+
+/* Навигация тоже опускается */
+.nav-left,
+.nav-right {
+    transition: all 0.4s ease;
+}
+
+.header.scrolled .nav-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+/* Адаптивность для скролла */
+@media (max-width: 768px) {
+    .header.scrolled {
+        padding: 5px 0;
+    }
+    
+    .header.scrolled .logo-icon {
+        font-size: 1.8rem !important;
+    }
+    
+    .header.scrolled .logo-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .header.scrolled .nav-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+}
+/* Убираем кнопки Каталог и Купить из hero секции */
+.action-buttons {
+    display: none !important;
+}
+.quick-examples {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-examples p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.example-chips {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}

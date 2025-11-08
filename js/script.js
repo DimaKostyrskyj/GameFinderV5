@@ -20,7 +20,7 @@ class GameFinderApp {
     
    initApp() {
     try {
-        this.initDOMElements();
+       this.initDOMElements();
         this.initEventListeners();
         this.createParticles();
         this.createStars();
@@ -34,6 +34,8 @@ class GameFinderApp {
         
         this.setupNavigation();
         this.setupDownloadTracking();
+        this.initScrollHeader(); // ДОБАВЬ ЭТУ СТРОЧКУ
+        
         console.log('✅ GameFinderApp initialized successfully');
     } catch (error) {
         console.error('❌ Error initializing GameFinderApp:', error);
@@ -73,6 +75,39 @@ class GameFinderApp {
             console.warn('🔇 Sound error:', error);
         }
     }
+
+    initScrollHeader() {
+    let lastScrollY = window.scrollY;
+    const header = document.querySelector('.header');
+    const scrolledClass = 'scrolled';
+    
+    const handleScroll = () => {
+        const currentScrollY = window.scrollY;
+        
+        if (currentScrollY > 50) {
+            header.classList.add(scrolledClass);
+        } else {
+            header.classList.remove(scrolledClass);
+        }
+        
+        lastScrollY = currentScrollY;
+    };
+    
+    // Оптимизация скролла
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                handleScroll();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+    
+    // Инициализация при загрузке
+    handleScroll();
+}
 
 initEasterEggs() {
     let konamiCode = [];
