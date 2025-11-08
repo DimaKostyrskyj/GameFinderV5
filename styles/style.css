@@ -3811,23 +3811,50 @@ input:focus, textarea:focus, select:focus {
 .jesus-container {
     filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
 }
-@keyframes haloSpin {
+@keyframes jesusAppear {
     0% {
-        transform: translateX(-50%) rotate(0deg);
-        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(0.3) rotate(-180deg);
+        opacity: 0;
+        filter: blur(20px);
+    }
+    60% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(0deg);
+        opacity: 1;
+        filter: blur(0px);
+    }
+    80% {
+        transform: translate(-50%, -50%) scale(0.9) rotate(5deg);
     }
     100% {
-        transform: translateX(-50%) rotate(360deg);
-        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        opacity: 1;
+        filter: blur(0px);
     }
 }
 
-@keyframes holyFloat {
+@keyframes jesusDisappear {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 0;
+    }
+}
+
+@keyframes jesusFloat {
     0%, 100% {
-        transform: translateY(0px);
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-10px) rotate(2deg);
     }
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-5px) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-15px) rotate(-2deg);
     }
 }
 
@@ -3839,5 +3866,61 @@ input:focus, textarea:focus, select:focus {
     100% {
         text-shadow: 0 0 20px gold, 0 0 30px orange;
         transform: scale(1.05);
+    }
+}
+
+/* Божественные частицы */
+@keyframes haloFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+    25% {
+        transform: translate(5px, -5px) scale(1.1);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(0, -10px) scale(1.2);
+        opacity: 0.9;
+    }
+    75% {
+        transform: translate(-5px, -5px) scale(1.1);
+        opacity: 1;
+    }
+}
+
+@keyframes floatDivine {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.6;
+    }
+    33% {
+        transform: translateY(-20px) rotate(120deg);
+        opacity: 1;
+    }
+    66% {
+        transform: translateY(-40px) rotate(240deg);
+        opacity: 0.8;
+    }
+}
+
+/* Божественный курсор */
+.god-cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    font-size: 24px;
+    animation: godGlow 1.5s ease-in-out infinite alternate;
+    text-shadow: 0 0 20px gold, 0 0 40px gold, 0 0 60px orange;
+}
+
+@keyframes godGlow {
+    from {
+        transform: scale(1);
+        filter: hue-rotate(0deg);
+    }
+    to {
+        transform: scale(1.2);
+        filter: hue-rotate(60deg);
     }
 }

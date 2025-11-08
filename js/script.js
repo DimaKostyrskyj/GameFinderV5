@@ -257,6 +257,8 @@ activateGodMode() {
 }
 
 showJesusImage() {
+    console.log('🖼️ Showing Jesus image...');
+    
     const jesusContainer = document.createElement('div');
     jesusContainer.className = 'jesus-container';
     jesusContainer.style.cssText = `
@@ -271,28 +273,35 @@ showJesusImage() {
         font-family: Arial, sans-serif;
     `;
     
-    // Используем emoji вместо изображения
+    // Используем emoji вместо изображения (гарантированно работает)
     jesusContainer.innerHTML = `
-        <div style="font-size: 120px; animation: jesusFloat 3s ease-in-out infinite;">
+        <div style="font-size: 120px; animation: jesusFloat 3s ease-in-out infinite; 
+                   filter: drop-shadow(0 0 20px gold);">
             👼
         </div>
         <div style="color: gold; font-size: 2rem; font-weight: bold; margin-top: 20px;
-                   text-shadow: 0 0 20px gold, 0 0 40px orange;">
+                   text-shadow: 0 0 20px gold, 0 0 40px orange; animation: textGlow 2s ease-in-out infinite alternate;">
             🙏 GOD MODE 🙏
         </div>
-        <div style="color: #ffd700; font-size: 1.2rem; margin-top: 10px;">
+        <div style="color: #ffd700; font-size: 1.2rem; margin-top: 10px; opacity: 0.9;">
             Divine Power Activated!
         </div>
     `;
     
     document.body.appendChild(jesusContainer);
     
+    console.log('✅ Jesus container added to DOM');
+    
     // Убираем через 5 секунд
     setTimeout(() => {
         if (jesusContainer.parentNode) {
+            console.log('🕒 Removing Jesus image...');
             jesusContainer.style.animation = 'jesusDisappear 1s ease-in forwards';
             setTimeout(() => {
-                if (jesusContainer.parentNode) jesusContainer.remove();
+                if (jesusContainer.parentNode) {
+                    jesusContainer.remove();
+                    console.log('✅ Jesus image removed');
+                }
             }, 1000);
         }
     }, 5000);
@@ -403,8 +412,8 @@ activateSecretMenu(x, y) {
         z-index: 10000;
     `;
     menu.innerHTML = `
-        <div style="margin-bottom: 5px;">🎯 Secret Menu</div>
-        <div style="font-size: 12px; opacity: 0.8;">Easter Eggs Active!</div>
+        <div style="margin-bottom: 5px;">🎯 Ты это нашел. Молодец!</div>
+        <div style="font-size: 12px; opacity: 0.8;">Ищи дальше пасхалки! (их тут много.)</div>
     `;
     
     document.body.appendChild(menu);
@@ -1458,7 +1467,6 @@ playHeavenlyGates() {
 }
 
 createGodParticles() {
-    // Создаем божественные частицы
     const particleContainer = document.createElement('div');
     particleContainer.className = 'god-particles';
     particleContainer.style.cssText = `
@@ -1473,7 +1481,7 @@ createGodParticles() {
     
     document.body.appendChild(particleContainer);
     
-    // Создаем частицы в форме нимба
+    // Создаем нимб из частиц
     this.createHaloParticles(particleContainer);
     
     // Удаляем через 5 секунд
@@ -1487,11 +1495,11 @@ createGodParticles() {
 createHaloParticles(container) {
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
-    const radius = 100;
+    const radius = 150; // Увеличиваем радиус чтобы был вокруг Иисуса
     
-    // Создаем нимб из частиц
-    for (let i = 0; i < 24; i++) {
-        const angle = (i / 24) * Math.PI * 2;
+    // Создаем нимб из частиц вокруг Иисуса
+    for (let i = 0; i < 36; i++) {
+        const angle = (i / 36) * Math.PI * 2;
         const x = centerX + Math.cos(angle) * radius;
         const y = centerY + Math.sin(angle) * radius;
         
@@ -1501,15 +1509,15 @@ createHaloParticles(container) {
             position: fixed;
             left: ${x}px;
             top: ${y}px;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: gold;
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
             animation: haloFloat 3s ease-in-out infinite;
-            animation-delay: ${i * 0.1}s;
-            box-shadow: 0 0 10px gold, 0 0 20px gold;
+            animation-delay: ${i * 0.08}s;
+            box-shadow: 0 0 8px gold, 0 0 16px gold;
         `;
         
         container.appendChild(particle);
