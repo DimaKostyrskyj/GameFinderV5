@@ -19,7 +19,8 @@ class GameFinderApp {
         this.initEventListeners();
         this.initCurrencyDropdown();
         this.createParticles();
-        this.createStars(); // Добавьте эту строку
+        this.createStars();
+        this.createStarShower(); // Добавьте эту строку
         this.setupNavigation();
         this.setupDownloadTracking();
         console.log('✅ GameFinderApp initialized successfully');
@@ -46,29 +47,34 @@ class GameFinderApp {
     }
     createStars() {
     const container = document.getElementById('stars');
-    if (!container) return;
+    if (!container) {
+        console.log('❌ Stars container not found');
+        return;
+    }
+
+    console.log('⭐ Creating BIG stars...');
 
     const createStar = () => {
         const star = document.createElement('div');
         star.className = 'star';
         
-        // Случайный размер
-        const sizes = ['small', 'medium', 'large'];
+        // БОЛЬШЕ РАЗМЕРОВ
+        const sizes = ['tiny', 'small', 'medium', 'large', 'huge'];
         const size = sizes[Math.floor(Math.random() * sizes.length)];
         star.classList.add(size);
         
-        // Случайный цвет
-        const colors = ['color-blue', 'color-purple', 'color-gold', 'color-pink', 'color-cyan', ''];
+        // БОЛЬШЕ ЦВЕТОВ
+        const colors = ['color-blue', 'color-purple', 'color-gold', 'color-pink', 'color-cyan', 'color-white', 'color-green'];
         const color = colors[Math.floor(Math.random() * colors.length)];
-        if (color) star.classList.add(color);
+        star.classList.add(color);
         
-        // Случайная анимация
-        const animations = ['starFall', 'starFallDiagonal', 'starFallReverse'];
+        // БОЛЬШЕ АНИМАЦИЙ
+        const animations = ['starFall', 'starFallDiagonal', 'starFallReverse', 'starFallVertical'];
         const animation = animations[Math.floor(Math.random() * animations.length)];
         
-        // Случайная позиция и длительность
-        const duration = Math.random() * 6 + 3; // 3-9 секунд
-        const delay = Math.random() * 2;
+        // РАЗНЫЕ СКОРОСТИ
+        const duration = Math.random() * 6 + 2; // 2-8 секунд - БЫСТРЕЕ
+        const delay = Math.random() * 1; // Меньше задержки
         
         star.style.cssText = `
             top: ${Math.random() * 100}vh;
@@ -77,15 +83,59 @@ class GameFinderApp {
         `;
         
         container.appendChild(star);
+
+        // Удаляем старые звезды
+        setTimeout(() => {
+            if (star.parentNode === container) {
+                container.removeChild(star);
+            }
+        }, (duration + delay) * 1000);
     };
 
-    // Создаем начальные звезды
-    for (let i = 0; i < 25; i++) {
-        setTimeout(createStar, i * 200);
+    // СОЗДАЕМ ОЧЕНЬ МНОГО ЗВЕЗД СРАЗУ
+    for (let i = 0; i < 50; i++) { // 50 звезд сразу!
+        setTimeout(createStar, i * 100); // Быстрее создаем
     }
 
-    // Продолжаем создавать звезды
-    setInterval(createStar, 1000);
+    // ЧАЩЕ СОЗДАЕМ НОВЫЕ ЗВЕЗДЫ
+    setInterval(createStar, 200); // Новая звезда каждые 200ms
+    
+    console.log('✅ BIG stars created successfully');
+}
+createStarShower() {
+    const container = document.getElementById('stars');
+    if (!container) return;
+
+    // Создаем "ливень" из звезд
+    const createShower = () => {
+        const showerCount = 10 + Math.floor(Math.random() * 15); // 10-25 звезд в ливне
+        
+        for (let i = 0; i < showerCount; i++) {
+            setTimeout(() => {
+                const star = document.createElement('div');
+                star.className = 'star small color-white';
+                
+                const startX = Math.random() * 100;
+                
+                star.style.cssText = `
+                    top: -20px;
+                    left: ${startX}vw;
+                    animation: starFallVertical ${1 + Math.random() * 2}s linear ${Math.random() * 0.5}s infinite;
+                `;
+                
+                container.appendChild(star);
+
+                setTimeout(() => {
+                    if (star.parentNode === container) {
+                        container.removeChild(star);
+                    }
+                }, 3000);
+            }, i * 50); // Небольшая задержка между звездами в ливне
+        }
+    };
+
+    // Запускаем звездные ливни каждые 3-8 секунд
+    setInterval(createShower, 3000 + Math.random() * 5000);
 }
 
     initDiscordButtons() {

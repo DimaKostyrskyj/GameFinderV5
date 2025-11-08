@@ -3370,6 +3370,7 @@ input:focus, textarea:focus, select:focus {
     cursor: not-allowed;
     transform: none !important;
 }
+/* Эффект падающих звезд - УВЕЛИЧЕННЫЕ РАЗМЕРЫ */
 .stars-container {
     position: fixed;
     top: 0;
@@ -3383,66 +3384,94 @@ input:focus, textarea:focus, select:focus {
 
 .star {
     position: absolute;
-    background: white;
     border-radius: 50%;
-    filter: blur(0.5px);
+    filter: blur(1px);
     opacity: 0;
     animation-timing-function: linear;
+    box-shadow: 0 0 10px currentColor;
+}
+
+/* УВЕЛИЧЕННЫЕ РАЗМЕРЫ ЗВЕЗД */
+.star.tiny {
+    width: 3px;
+    height: 3px;
 }
 
 .star.small {
-    width: 1px;
-    height: 1px;
+    width: 5px;
+    height: 5px;
 }
 
 .star.medium {
-    width: 2px;
-    height: 2px;
+    width: 8px;
+    height: 8px;
 }
 
 .star.large {
-    width: 3px;
-    height: 3px;
+    width: 12px;
+    height: 12px;
+}
+
+.star.huge {
+    width: 18px;
+    height: 18px;
 }
 
 /* Анимации для звезд */
 @keyframes starFall {
     0% {
-        transform: translateX(-100px) translateY(-100px) rotate(45deg);
+        transform: translateX(-200px) translateY(-200px) rotate(45deg);
         opacity: 0;
     }
-    10% {
+    5% {
         opacity: 1;
     }
-    90% {
+    95% {
         opacity: 1;
     }
     100% {
-        transform: translateX(calc(100vw + 100px)) translateY(calc(100vh + 100px)) rotate(45deg);
+        transform: translateX(calc(100vw + 200px)) translateY(calc(100vh + 200px)) rotate(45deg);
         opacity: 0;
     }
 }
 
 @keyframes starFallDiagonal {
     0% {
-        transform: translateX(-200px) translateY(-100px) rotate(30deg);
+        transform: translateX(-300px) translateY(-150px) rotate(30deg);
         opacity: 0;
     }
-    15% {
+    8% {
         opacity: 1;
     }
-    85% {
+    92% {
         opacity: 1;
     }
     100% {
-        transform: translateX(calc(100vw + 200px)) translateY(calc(100vh + 100px)) rotate(30deg);
+        transform: translateX(calc(100vw + 300px)) translateY(calc(100vh + 150px)) rotate(30deg);
         opacity: 0;
     }
 }
 
 @keyframes starFallReverse {
     0% {
-        transform: translateX(calc(100vw + 100px)) translateY(-100px) rotate(-45deg);
+        transform: translateX(calc(100vw + 200px)) translateY(-200px) rotate(-45deg);
+        opacity: 0;
+    }
+    5% {
+        opacity: 1;
+    }
+    95% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-200px) translateY(calc(100vh + 200px)) rotate(-45deg);
+        opacity: 0;
+    }
+}
+
+@keyframes starFallVertical {
+    0% {
+        transform: translateY(-100px) translateX(0) rotate(0deg);
         opacity: 0;
     }
     10% {
@@ -3452,54 +3481,59 @@ input:focus, textarea:focus, select:focus {
         opacity: 1;
     }
     100% {
-        transform: translateX(-100px) translateY(calc(100vh + 100px)) rotate(-45deg);
+        transform: translateY(calc(100vh + 100px)) translateX(100px) rotate(0deg);
         opacity: 0;
     }
 }
 
-/* Цветовые вариации звезд */
+/* ЯРКИЕ ЦВЕТА С ПЕРЕЛИВАМИ */
 .star.color-blue {
-    background: #0ea5e9;
+    background: linear-gradient(45deg, #0ea5e9, #22d3ee, #0ea5e9);
+    box-shadow: 0 0 15px #0ea5e9, 0 0 30px #0ea5e9;
 }
 
 .star.color-purple {
-    background: #8b5cf6;
+    background: linear-gradient(45deg, #8b5cf6, #a855f7, #8b5cf6);
+    box-shadow: 0 0 15px #8b5cf6, 0 0 30px #8b5cf6;
 }
 
 .star.color-gold {
-    background: #fbbf24;
+    background: linear-gradient(45deg, #fbbf24, #f59e0b, #fbbf24);
+    box-shadow: 0 0 15px #fbbf24, 0 0 30px #fbbf24;
 }
 
 .star.color-pink {
-    background: #ec4899;
+    background: linear-gradient(45deg, #ec4899, #db2777, #ec4899);
+    box-shadow: 0 0 15px #ec4899, 0 0 30px #ec4899;
 }
 
 .star.color-cyan {
-    background: #22d3ee;
+    background: linear-gradient(45deg, #22d3ee, #06b6d4, #22d3ee);
+    box-shadow: 0 0 15px #22d3ee, 0 0 30px #22d3ee;
 }
 
-/* Убедимся что градиентный фон работает */
-.animated-bg {
-    position: fixed;
+.star.color-white {
+    background: linear-gradient(45deg, #ffffff, #f8fafc, #ffffff);
+    box-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff;
+}
+
+.star.color-green {
+    background: linear-gradient(45deg, #10b981, #059669, #10b981);
+    box-shadow: 0 0 15px #10b981, 0 0 30px #10b981;
+}
+
+/* Эффект хвоста для больших звезд */
+.star.large::after, .star.huge::after {
+    content: '';
+    position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: -20px;
+    width: 40px;
     height: 100%;
-    background: linear-gradient(45deg, #5a67d8, #3c35a0, #910f52, #a5185c);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    z-index: -3;
-}
-
-/* Гарантируем правильный порядок z-index */
-.animated-bg {
-    z-index: -3;
-}
-
-.particles-container {
-    z-index: -2;
-}
-
-.stars-container {
-    z-index: -1;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        currentColor 30%, 
+        transparent 100%);
+    filter: blur(3px);
+    opacity: 0.6;
 }
