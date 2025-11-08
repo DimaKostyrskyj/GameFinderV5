@@ -3537,3 +3537,99 @@ input:focus, textarea:focus, select:focus {
     filter: blur(3px);
     opacity: 0.6;
 }
+/* Стили для пасхалок */
+.easter-egg-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.5rem;
+    z-index: 10000;
+    animation: eggMessage 3s ease-in-out;
+    box-shadow: 0 0 50px rgba(255,255,255,0.5);
+    text-align: center;
+}
+
+@keyframes eggMessage {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    30% { transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--confetti-color);
+    animation: confettiFall 5s linear forwards;
+    z-index: 9999;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.debug-panel {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.8);
+    color: #00ff00;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    z-index: 1000;
+    border: 1px solid #00ff00;
+}
+
+.god-cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    font-size: 20px;
+    animation: glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 5px gold; }
+    to { text-shadow: 0 0 20px gold, 0 0 30px gold; }
+}
+
+@keyframes matrixFall {
+    to {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes ripple {
+    to {
+        width: 200px;
+        height: 200px;
+        opacity: 0;
+    }
+}
+
+.secret-hint {
+    background: rgba(255, 215, 0, 0.2);
+    border: 2px solid gold;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+    animation: pulse 2s infinite;
+}

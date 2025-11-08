@@ -13,21 +13,448 @@ class GameFinderApp {
     }
     
     
-    initApp() {
+   initApp() {
     try {
         this.initDOMElements();
         this.initEventListeners();
         this.initCurrencyDropdown();
         this.createParticles();
         this.createStars();
-        this.createStarShower(); // Добавьте эту строку
+        this.createStarShower();
+        
+        // Добавляем все пасхалки
+        this.initEasterEggs();
+        this.initSecretClicks();
+        this.initTouchGestures();
+        this.initHiddenFeatures();
+        
         this.setupNavigation();
         this.setupDownloadTracking();
         console.log('✅ GameFinderApp initialized successfully');
     } catch (error) {
         console.error('❌ Error initializing GameFinderApp:', error);
-        }
     }
+}
+
+// Добавьте эти методы в класс GameFinderApp:
+
+initEasterEggs() {
+    let konamiCode = [];
+    const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+    
+    let gameGodMode = [];
+    const godModeSequence = ['KeyG', 'KeyO', 'KeyD'];
+    
+    let secretSearch = false;
+    
+    document.addEventListener('keydown', (e) => {
+        // Конами код
+        konamiCode.push(e.code);
+        if (konamiCode.length > konamiSequence.length) {
+            konamiCode.shift();
+        }
+        if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+            this.activateKonamiCode();
+            konamiCode = [];
+        }
+        
+        // God Mode
+        gameGodMode.push(e.code);
+        if (gameGodMode.length > godModeSequence.length) {
+            gameGodMode.shift();
+        }
+        if (JSON.stringify(gameGodMode) === JSON.stringify(godModeSequence)) {
+            this.activateGodMode();
+            gameGodMode = [];
+        }
+        
+        // Секретный поиск (нажать G затем F)
+        if (e.code === 'KeyG') {
+            secretSearch = true;
+            setTimeout(() => {
+                secretSearch = false;
+            }, 2000);
+        }
+        if (secretSearch && e.code === 'KeyF') {
+            this.activateSecretSearch();
+            secretSearch = false;
+        }
+        
+        // Секретный режим (Ctrl + Shift + M)
+        if (e.ctrlKey && e.shiftKey && e.code === 'KeyM') {
+            this.activateMatrixMode();
+        }
+    });
+    
+    console.log('🎮 Easter eggs loaded! Try: ↑↑↓↓←→←→BA or GOD');
+}
+
+initSecretClicks() {
+    // Секретный клик по логотипу
+    const logo = document.querySelector('.logo') || document.querySelector('.logo-left');
+    if (logo) {
+        let clickCount = 0;
+        let lastClick = 0;
+        
+        logo.addEventListener('click', (e) => {
+            const now = Date.now();
+            if (now - lastClick < 500) { // Двойной клик
+                clickCount++;
+                if (clickCount >= 5) {
+                    this.activateDeveloperMode();
+                    clickCount = 0;
+                }
+            } else {
+                clickCount = 1;
+            }
+            lastClick = now;
+        });
+    }
+    
+    // Секретный клик по фону (правой кнопкой)
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        this.activateSecretMenu(e.clientX, e.clientY);
+    });
+    
+    // Секретный клик по заголовку
+    const title = document.querySelector('.hero-title');
+    if (title) {
+        title.addEventListener('dblclick', () => {
+            this.activateRainbowMode();
+        });
+    }
+}
+
+initTouchGestures() {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchCount = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchCount = e.touches.length;
+    });
+    
+    document.addEventListener('touchend', (e) => {
+        if (e.changedTouches.length === 0) return;
+        
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
+        
+        // Свайп вверх с двумя пальцами
+        if (touchCount === 2 && Math.abs(diffY) > 100 && diffY < 0) {
+            this.activateMobileSecret();
+        }
+        
+        // Рисование круга
+        if (Math.abs(diffX) > 50 && Math.abs(diffY) > 50) {
+            this.checkGesture(diffX, diffY);
+        }
+        
+        // Тап тремя пальцами
+        if (touchCount === 3) {
+            this.activateTouchSecret();
+        }
+    });
+}
+
+initHiddenFeatures() {
+    // Секретный режим при загрузке с определенным параметром
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('debug') === 'true') {
+        this.activateDeveloperMode();
+    }
+    
+    // Секретный таймер - через 5 минут показываем подсказку
+    setTimeout(() => {
+        this.showEasterEggHint();
+    }, 300000);
+}
+
+// Методы активации пасхалок
+activateKonamiCode() {
+    console.log('🎉 Konami Code Activated!');
+    
+    // Создаем эффект конфетти
+    this.createConfetti();
+    
+    // Меняем тему на ретро-игровую
+    document.body.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7)';
+    document.body.style.backgroundSize = '400% 400%';
+    
+    // Показываем сообщение
+    this.showEasterEggMessage('🎮 Konami Code Activated! +30 Lives!', 'retro');
+    
+    // Добавляем 8-битный звук (вибрация)
+    if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100, 50, 100]);
+    }
+}
+
+activateGodMode() {
+    console.log('🌟 God Mode Activated!');
+    
+    // Делаем все карточки золотыми
+    const cards = document.querySelectorAll('.glass-card');
+    cards.forEach(card => {
+        card.style.background = 'linear-gradient(45deg, rgba(255,215,0,0.3), rgba(255,193,7,0.2))';
+        card.style.borderColor = 'gold';
+        card.style.boxShadow = '0 0 30px gold';
+    });
+    
+    this.showEasterEggMessage('🌟 GOD MODE ACTIVATED! Unlimited Power!', 'god');
+    
+    // Добавляем сияющий эффект курсору
+    this.addGodCursor();
+}
+
+activateSecretSearch() {
+    console.log('🔍 Secret Search Activated!');
+    
+    // Автоматически заполняем поиск секретным запросом
+    if (this.searchInput) {
+        this.searchInput.value = 'игры которые изменили мою жизнь';
+        this.autoResizeTextarea.call(this.searchInput);
+        
+        // Показываем подсказку
+        const secretHint = document.createElement('div');
+        secretHint.className = 'secret-hint';
+        secretHint.innerHTML = '✨ Секретный поиск активирован! Нажмите поиск для магии...';
+        this.searchInput.parentNode.appendChild(secretHint);
+        
+        setTimeout(() => {
+            if (secretHint.parentNode) secretHint.remove();
+        }, 3000);
+    }
+}
+
+activateDeveloperMode() {
+    console.log('👨‍💻 Developer Mode Activated!');
+    
+    // Добавляем отладочную информацию
+    const debugPanel = document.createElement('div');
+    debugPanel.className = 'debug-panel';
+    debugPanel.innerHTML = `
+        <div>👨‍💻 Developer Mode</div>
+        <div>Games Loaded: ${this.currentGames ? this.currentGames.length : 0}</div>
+        <div>AI API: DeepSeek</div>
+        <div>Version: 2.0.1</div>
+        <div>Easter Eggs: 6 active</div>
+    `;
+    document.body.appendChild(debugPanel);
+    
+    this.showEasterEggMessage('👨‍💻 Developer Mode Activated!', 'dev');
+}
+
+activateMatrixMode() {
+    console.log('💚 Matrix Mode Activated!');
+    
+    // Зеленый матричный фон
+    document.body.style.background = 'linear-gradient(45deg, #001100, #003300, #001100)';
+    
+    // Добавляем падающий код
+    this.createMatrixRain();
+    
+    this.showEasterEggMessage('💚 Welcome to the Matrix!', 'matrix');
+}
+
+activateRainbowMode() {
+    console.log('🌈 Rainbow Mode Activated!');
+    
+    const cards = document.querySelectorAll('.glass-card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.background = `linear-gradient(45deg, 
+                hsl(${index * 30}, 100%, 50%, 0.3), 
+                hsl(${index * 30 + 60}, 100%, 50%, 0.2))`;
+            card.style.borderColor = `hsl(${index * 30}, 100%, 50%)`;
+        }, index * 100);
+    });
+    
+    this.showEasterEggMessage('🌈 Rainbow Mode! So colorful!', 'rainbow');
+}
+
+activateMobileSecret() {
+    console.log('📱 Mobile Secret Activated!');
+    
+    // Специальные функции для мобильных
+    document.body.classList.add('mobile-secret');
+    
+    // Вибрация (если поддерживается)
+    if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100]);
+    }
+    
+    this.showEasterEggMessage('📱 Mobile Magic!', 'mobile');
+}
+
+activateTouchSecret() {
+    console.log('👆 Touch Secret Activated!');
+    
+    // Создаем волну от точки касания
+    this.createTouchRipple(touchStartX, touchStartY);
+    this.showEasterEggMessage('👆 Triple Touch!', 'touch');
+}
+
+activateSecretMenu(x, y) {
+    console.log('🎯 Secret Menu Activated!');
+    
+    const menu = document.createElement('div');
+    menu.className = 'secret-menu';
+    menu.style.cssText = `
+        position: fixed;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(0,0,0,0.9);
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid gold;
+        z-index: 10000;
+    `;
+    menu.innerHTML = `
+        <div style="margin-bottom: 5px;">🎯 Secret Menu</div>
+        <div style="font-size: 12px; opacity: 0.8;">Easter Eggs Active!</div>
+    `;
+    
+    document.body.appendChild(menu);
+    
+    setTimeout(() => {
+        if (menu.parentNode) menu.remove();
+    }, 2000);
+}
+
+// Вспомогательные методы
+showEasterEggMessage(text, type = 'default') {
+    const message = document.createElement('div');
+    message.className = `easter-egg-message ${type}`;
+    message.textContent = text;
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+        if (message.parentNode) {
+            message.remove();
+        }
+    }, 3000);
+}
+
+createConfetti() {
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#ff9ff3', '#f368e0'];
+    
+    for (let i = 0; i < 150; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.cssText = `
+                left: ${Math.random() * 100}vw;
+                --confetti-color: ${colors[Math.floor(Math.random() * colors.length)]};
+                animation-duration: ${Math.random() * 3 + 2}s;
+                transform: rotate(${Math.random() * 360}deg);
+            `;
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => {
+                if (confetti.parentNode) confetti.remove();
+            }, 5000);
+        }, i * 20);
+    }
+}
+
+addGodCursor() {
+    const godCursor = document.createElement('div');
+    godCursor.className = 'god-cursor';
+    godCursor.innerHTML = '🌟';
+    document.body.appendChild(godCursor);
+    
+    document.addEventListener('mousemove', (e) => {
+        godCursor.style.left = e.clientX + 'px';
+        godCursor.style.top = e.clientY + 'px';
+    });
+    
+    // Убираем через 30 секунд
+    setTimeout(() => {
+        godCursor.remove();
+    }, 30000);
+}
+
+createMatrixRain() {
+    const chars = '01アイウエオカキクケコサシスセソ';
+    
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            const drop = document.createElement('div');
+            drop.className = 'matrix-drop';
+            drop.style.cssText = `
+                position: fixed;
+                left: ${Math.random() * 100}vw;
+                top: -20px;
+                color: #00ff00;
+                font-family: monospace;
+                font-size: 14px;
+                animation: matrixFall ${Math.random() * 3 + 2}s linear forwards;
+                z-index: -1;
+            `;
+            
+            let text = '';
+            for (let j = 0; j < 10; j++) {
+                text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+            }
+            drop.innerHTML = text;
+            
+            document.body.appendChild(drop);
+            
+            setTimeout(() => {
+                if (drop.parentNode) drop.remove();
+            }, 5000);
+        }, i * 100);
+    }
+}
+
+showEasterEggHint() {
+    const hints = [
+        '💡 Подсказка: Попробуйте ввести "GOD" на клавиатуре',
+        '🎮 Знаете код Конами? ↑↑↓↓←→←→BA',
+        '👆 Дважды кликните по заголовку для сюрприза!',
+        '📱 На мобильных: свайп вверх двумя пальцами'
+    ];
+    
+    const randomHint = hints[Math.floor(Math.random() * hints.length)];
+    this.showEasterEggMessage(randomHint, 'hint');
+}
+
+checkGesture(diffX, diffY) {
+    // Простая проверка жестов
+    if (Math.abs(diffX) > 100 && Math.abs(diffY) > 100) {
+        this.showEasterEggMessage('👌 Nice gesture!', 'gesture');
+    }
+}
+
+createTouchRipple(x, y) {
+    const ripple = document.createElement('div');
+    ripple.className = 'touch-ripple';
+    ripple.style.cssText = `
+        position: fixed;
+        left: ${x}px;
+        top: ${y}px;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        animation: ripple 1s ease-out;
+        pointer-events: none;
+    `;
+    document.body.appendChild(ripple);
+    
+    setTimeout(() => {
+        if (ripple.parentNode) ripple.remove();
+    }, 1000);
+}
 
     initDOMElements() {
         this.searchInput = document.getElementById('searchInput');
@@ -45,6 +472,105 @@ class GameFinderApp {
             exampleChips: this.exampleChips.length
         });
     }
+
+initEasterEggs() {
+    let konamiCode = [];
+    const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+    
+    let gameGodMode = [];
+    const godModeSequence = ['KeyG', 'KeyO', 'KeyD'];
+    
+    document.addEventListener('keydown', (e) => {
+        // Конами код
+        konamiCode.push(e.code);
+        if (konamiCode.length > konamiSequence.length) {
+            konamiCode.shift();
+        }
+        if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+            this.activateKonamiCode();
+            konamiCode = [];
+        }
+        
+        // God Mode
+        gameGodMode.push(e.code);
+        if (gameGodMode.length > godModeSequence.length) {
+            gameGodMode.shift();
+        }
+        if (JSON.stringify(gameGodMode) === JSON.stringify(godModeSequence)) {
+            this.activateGodMode();
+            gameGodMode = [];
+        }
+        
+        // Секретный поиск (нажать G затем F)
+        if (e.code === 'KeyG') {
+            setTimeout(() => {
+                document.addEventListener('keydown', (fEvent) => {
+                    if (fEvent.code === 'KeyF') {
+                        this.activateSecretSearch();
+                    }
+                }, { once: true });
+            }, 1000);
+        }
+    });
+    
+    console.log('🎮 Easter eggs loaded! Try: ↑↑↓↓←→←→BA or GOD');
+}
+
+activateKonamiCode() {
+    console.log('🎉 Konami Code Activated!');
+    
+    // Создаем эффект конфетти
+    this.createConfetti();
+    
+    // Меняем тему на ретро-игровую
+    document.body.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7)';
+    document.body.style.backgroundSize = '400% 400%';
+    document.body.style.animation = 'gradientShift 3s ease infinite';
+    
+    // Показываем сообщение
+    this.showEasterEggMessage('🎮 Konami Code Activated! +30 Lives!', 'retro');
+    
+    // Добавляем ретро-звук (если нужно)
+    this.playRetroSound();
+}
+
+activateGodMode() {
+    console.log('🌟 God Mode Activated!');
+    
+    // Делаем все карточки золотыми
+    const cards = document.querySelectorAll('.glass-card');
+    cards.forEach(card => {
+        card.style.background = 'linear-gradient(45deg, rgba(255,215,0,0.3), rgba(255,193,7,0.2))';
+        card.style.borderColor = 'gold';
+        card.style.boxShadow = '0 0 30px gold';
+    });
+    
+    this.showEasterEggMessage('🌟 GOD MODE ACTIVATED! Unlimited Power!', 'god');
+    
+    // Добавляем сияющий эффект курсору
+    this.addGodCursor();
+}
+
+activateSecretSearch() {
+    console.log('🔍 Secret Search Activated!');
+    
+    // Автоматически заполняем поиск секретным запросом
+    if (this.searchInput) {
+        this.searchInput.value = 'игры которые изменили мою жизнь';
+        this.autoResizeTextarea.call(this.searchInput);
+        
+        // Показываем подсказку
+        const secretHint = document.createElement('div');
+        secretHint.className = 'secret-hint';
+        secretHint.innerHTML = '✨ Секретный поиск активирован! Нажмите поиск для магии...';
+        this.searchInput.parentNode.appendChild(secretHint);
+        
+        setTimeout(() => {
+            if (secretHint.parentNode) secretHint.remove();
+        }, 3000);
+    }
+}
+
     createStars() {
     const container = document.getElementById('stars');
     if (!container) {
