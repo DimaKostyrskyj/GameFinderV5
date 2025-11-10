@@ -14,7 +14,7 @@ let ADMIN_USERS = {
 async function loadConfiguration() {
     try {
         // Пробуем загрузить локальный конфиг
-        const localConfigModule = await import('./js/config.local.js');
+        const localConfigModule = await import('/js/config.local.js');
         if (localConfigModule.LOCAL_CONFIG) {
             const localConfig = localConfigModule.LOCAL_CONFIG;
             
@@ -36,7 +36,7 @@ async function loadConfiguration() {
         console.log('⚠️ Локальная конфигурация не найдена, используем демо-режим');
     }
     
-    console.warn('🚨 Работаем в демо-режиме! Создайте config/config.local.js');
+    console.warn('🚨 Работаем в демо-режиме! Создайте js/config.local.js');
     return false;
 }
 
