@@ -1,9 +1,438 @@
-// Конфигурация
-const CONFIG = {
-    DEEPSEEK_API_KEY: 'sk-7f36fac6978e4df0b3ee1e97534d5fc4',
-    GEMINI_API_KEY: 'AIzaSyCbsZPAQAsdzeEgj56JPImGT1WBrggkL-g',
-    ACTIVE_AI: 'gemini' // значение по умолчанию
+
+// В начале script.js
+let CONFIG = {
+    DEEPSEEK_API_KEY: 'demo-deepseek-key',
+    GEMINI_API_KEY: 'demo-gemini-key',
+    ACTIVE_AI: 'deepseek'
 };
+
+let ADMIN_USERS = {
+    'demo': 'demo123'
+};
+
+// Функция загрузки конфигурации
+async function loadConfiguration() {
+    try {
+        // Пробуем загрузить локальный конфиг
+        const localConfigModule = await import('./js/config.local.js');
+        if (localConfigModule.LOCAL_CONFIG) {
+            const localConfig = localConfigModule.LOCAL_CONFIG;
+            
+            // Обновляем CONFIG
+            if (localConfig.API_KEYS) {
+                CONFIG.DEEPSEEK_API_KEY = localConfig.API_KEYS.DEEPSEEK_API_KEY || CONFIG.DEEPSEEK_API_KEY;
+                CONFIG.GEMINI_API_KEY = localConfig.API_KEYS.GEMINI_API_KEY || CONFIG.GEMINI_API_KEY;
+            }
+            
+            // Обновляем ADMIN_USERS
+            if (localConfig.ADMIN_USERS) {
+                ADMIN_USERS = localConfig.ADMIN_USERS;
+            }
+            
+            console.log('✅ Загружена локальная конфигурация');
+            return true;
+        }
+    } catch (error) {
+        console.log('⚠️ Локальная конфигурация не найдена, используем демо-режим');
+    }
+    
+    console.warn('🚨 Работаем в демо-режиме! Создайте config/config.local.js');
+    return false;
+}
+
+class AccessControlSystem {
+    constructor() {
+        this.currentUser = null;
+        this.userRole = 'user';
+        this.adminLogs = []; // ИНИЦИАЛИЗИРУЕМ ПУСТОЙ МАССИВ
+        this.initAccessControl();
+    }
+
+    initAccessControl() {
+        const savedSession = localStorage.getItem('gamefinder_admin_session');
+        if (savedSession) {
+            try {
+                const session = JSON.parse(savedSession);
+                if (session.expires > Date.now() && ADMIN_USERS[session.user]) {
+                    this.currentUser = session.user;
+                    this.userRole = 'admin';
+                    console.log(`🔐 Админ вошел: ${this.currentUser}`);
+                    this.enableAdminFeatures();
+                }
+            } catch (e) {
+                localStorage.removeItem('gamefinder_admin_session');
+            }
+        }
+
+        this.addAdminLoginButton();
+    }
+
+    addAdminLoginButton() {
+        const adminBtn = document.createElement('button');
+        adminBtn.innerHTML = '🔐';
+        adminBtn.className = 'admin-access-btn';
+        adminBtn.title = 'Вход для команды проекта';
+        
+        adminBtn.addEventListener('click', () => {
+            this.showAdminLogin();
+        });
+
+        document.body.appendChild(adminBtn);
+    }
+
+    showAdminLogin() {
+        if (this.userRole === 'admin') {
+            this.showAdminPanel();
+            return;
+        }
+
+        const loginHTML = `
+            <div class="admin-login-modal">
+                <div class="admin-login-content">
+                    <div class="login-header">
+                        <h3>🎮 Вход для команды GameFinders</h3>
+                        <p>Доступ к логам и управлению</p>
+                    </div>
+                    
+                    <div class="login-form">
+                        <div class="input-group">
+                            <label for="adminLogin">Логин команды:</label>
+                            <input type="text" id="adminLogin" placeholder="Введите ваш логин">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="adminPassword">Пароль:</label>
+                            <input type="password" id="adminPassword" placeholder="Введите пароль">
+                        </div>
+                        
+                        <div class="login-buttons">
+                            <button id="adminLoginBtn" class="login-btn">
+                                <span class="btn-icon">🔓</span>
+                                Войти в систему
+                            </button>
+                            <button id="adminLoginClose" class="cancel-btn">
+                                Отмена
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="login-footer">
+                        <small>Только для команды разработки</small>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const overlay = document.createElement('div');
+        overlay.innerHTML = loginHTML;
+        document.body.appendChild(overlay);
+
+        document.getElementById('adminLoginBtn').addEventListener('click', () => {
+            this.handleAdminLogin();
+        });
+
+        document.getElementById('adminLoginClose').addEventListener('click', () => {
+            overlay.remove();
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target.classList.contains('admin-login-modal')) {
+                overlay.remove();
+            }
+        });
+
+        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.handleAdminLogin();
+            }
+        });
+
+        // Фокус на поле логина
+        setTimeout(() => {
+            document.getElementById('adminLogin').focus();
+        }, 100);
+    }
+
+    handleAdminLogin() {
+        const login = document.getElementById('adminLogin').value.trim();
+        const password = document.getElementById('adminPassword').value;
+
+        if (!login || !password) {
+            this.showNotification('❌ Заполните все поля', 'error');
+            return;
+        }
+
+        if (ADMIN_USERS[login] === password) {
+            this.currentUser = login;
+            this.userRole = 'admin';
+            
+            const session = {
+                user: login,
+                expires: Date.now() + (24 * 60 * 60 * 1000) // 24 часа
+            };
+            localStorage.setItem('gamefinder_admin_session', JSON.stringify(session));
+
+            this.enableAdminFeatures();
+            document.querySelector('.admin-login-modal').remove();
+            
+            this.showNotification('✅ Успешный вход в систему администрирования', 'success');
+        } else {
+            this.showNotification('❌ Неверный логин или пароль', 'error');
+            // Анимация тряски
+            const form = document.querySelector('.admin-login-content');
+            form.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => form.style.animation = '', 500);
+        }
+    }
+
+    enableAdminFeatures() {
+        console.log('🔧 Активированы функции администрирования');
+        this.overrideConsoleLog();
+        this.addGlobalAdminFunctions();
+        this.createAdminPanel();
+    }
+
+    createAdminPanel() {
+        const oldPanel = document.getElementById('adminPanel');
+        if (oldPanel) oldPanel.remove();
+
+        const panelHTML = `
+            <div id="adminPanel" class="admin-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span class="panel-icon">🔧</span>
+                        Панель управления
+                        <span class="user-badge">${this.currentUser}</span>
+                    </div>
+                    <div class="panel-controls">
+                        <button class="panel-btn refresh-btn" title="Обновить логи">
+                            🔄
+                        </button>
+                        <button class="panel-btn clear-btn" title="Очистить логи">
+                            🗑️
+                        </button>
+                        <button class="panel-btn close-btn" title="Закрыть панель">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="panel-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Логи:</span>
+                        <span class="stat-value" id="logsCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Ошибки:</span>
+                        <span class="stat-value error-count" id="errorsCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Сессия:</span>
+                        <span class="stat-value" id="sessionTime">активна</span>
+                    </div>
+                </div>
+                
+                <div class="logs-container">
+                    <div class="logs-header">
+                        <span>Системные логи (последние 50):</span>
+                        <button class="auto-scroll-btn" id="autoScrollBtn" title="Автопрокрутка">📜</button>
+                    </div>
+                    <div id="adminLogs" class="admin-logs">
+                        <div class="log-placeholder">Логи будут отображаться здесь...</div>
+                    </div>
+                </div>
+                
+                <div class="panel-footer">
+                    <button class="logout-btn" id="adminLogoutBtn">
+                        🚪 Выйти
+                    </button>
+                    <span class="panel-version">v2.0</span>
+                </div>
+            </div>
+        `;
+
+        const panel = document.createElement('div');
+        panel.innerHTML = panelHTML;
+        document.body.appendChild(panel);
+
+        // Обработчики событий
+        document.querySelector('.close-btn').addEventListener('click', () => {
+            panel.remove();
+        });
+
+        document.querySelector('.refresh-btn').addEventListener('click', () => {
+            this.updateAdminLogs();
+        });
+
+        document.querySelector('.clear-btn').addEventListener('click', () => {
+            this.adminLogs = [];
+            this.updateAdminLogs();
+            this.showNotification('🗑️ Логи очищены', 'info');
+        });
+
+        document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('gamefinder_admin_session');
+            location.reload();
+        });
+
+        document.getElementById('autoScrollBtn').addEventListener('click', (e) => {
+            e.target.classList.toggle('active');
+        });
+
+        this.updateAdminLogs();
+    }
+
+    overrideConsoleLog() {
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = (...args) => {
+            this.adminLogs.push({
+                type: 'log',
+                timestamp: new Date().toLocaleTimeString(),
+                message: args.join(' ')
+            });
+            originalLog(...args);
+            this.updateAdminLogs();
+        };
+
+        console.error = (...args) => {
+            this.adminLogs.push({
+                type: 'error',
+                timestamp: new Date().toLocaleTimeString(),
+                message: args.join(' ')
+            });
+            originalError(...args);
+            this.updateAdminLogs();
+        };
+
+        console.warn = (...args) => {
+            this.adminLogs.push({
+                type: 'warn',
+                timestamp: new Date().toLocaleTimeString(),
+                message: args.join(' ')
+            });
+            originalWarn(...args);
+            this.updateAdminLogs();
+        };
+    }
+
+    updateAdminLogs() {
+        const logsContainer = document.getElementById('adminLogs');
+        if (!logsContainer) return;
+
+        const recentLogs = this.adminLogs.slice(-50);
+        
+        if (recentLogs.length === 0) {
+            logsContainer.innerHTML = '<div class="log-placeholder">Нет записей в логах</div>';
+            return;
+        }
+
+        logsContainer.innerHTML = recentLogs.map(log => `
+            <div class="log-entry log-${log.type}">
+                <span class="log-time">[${log.timestamp}]</span>
+                <span class="log-message">${this.escapeHtml(log.message)}</span>
+            </div>
+        `).join('');
+
+        // Автопрокрутка если включена
+        const autoScrollBtn = document.getElementById('autoScrollBtn');
+        if (autoScrollBtn && autoScrollBtn.classList.contains('active')) {
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        // Обновляем статистику
+        this.updateStats();
+    }
+
+    updateStats() {
+        const logsCount = document.getElementById('logsCount');
+        const errorsCount = document.getElementById('errorsCount');
+        
+        if (logsCount) {
+            logsCount.textContent = this.adminLogs.length;
+        }
+        
+        if (errorsCount) {
+            const errorCount = this.adminLogs.filter(log => log.type === 'error').length;
+            errorsCount.textContent = errorCount;
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    addGlobalAdminFunctions() {
+        window.admin = {
+            getCurrentUser: () => this.currentUser,
+            
+            logout: () => {
+                localStorage.removeItem('gamefinder_admin_session');
+                location.reload();
+            },
+            
+            togglePanel: () => {
+                const panel = document.getElementById('adminPanel');
+                if (panel) {
+                    panel.remove();
+                } else {
+                    this.createAdminPanel();
+                }
+            },
+            
+            getStats: () => {
+                return {
+                    currentUser: this.currentUser,
+                    totalLogs: this.adminLogs.length,
+                    errorLogs: this.adminLogs.filter(log => log.type === 'error').length,
+                    warningLogs: this.adminLogs.filter(log => log.type === 'warn').length,
+                    sessionStart: new Date().toLocaleString()
+                };
+            },
+            
+            // Новая функция: экспорт логов
+            exportLogs: () => {
+                const data = JSON.stringify(this.adminLogs, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `gamefinder-logs-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        };
+
+        console.log('🔧 Глобальные админ-функции загружены: window.admin');
+        console.log('📋 Доступные команды: admin.getStats(), admin.togglePanel(), admin.exportLogs()');
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `admin-notification admin-notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                <span class="notification-message">${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('fade-out');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }, 3000);
+    }
+}
 
 
 // Основной класс приложения
@@ -11,13 +440,27 @@ class GameFinderApp {
     constructor() {
         console.log('🎮 Initializing GameFinderApp...');
         
-        // Ждем пока все зависимости загрузятся
+        // Ждем загрузки конфигурации перед инициализацией AI
+        this.initAppWithConfig();
+    }
+
+    async initAppWithConfig() {
+        // Ждем загрузки конфигурации
+        await loadConfiguration();
+        
+        console.log('🔧 Конфигурация загружена:', {
+            hasDeepseek: !!window.CONFIG.DEEPSEEK_API_KEY && window.CONFIG.DEEPSEEK_API_KEY !== 'demo-deepseek-key',
+            hasGemini: !!window.CONFIG.GEMINI_API_KEY && window.CONFIG.GEMINI_API_KEY !== 'demo-gemini-key',
+            activeAI: window.CONFIG.ACTIVE_AI
+        });
+
+        // Теперь инициализируем AI с правильными ключами
         setTimeout(() => {
             this.initializeAI();
         }, 100);
         
         this.priceAPI = window.priceAPI;
-        this.currentAI = 'deepseek';
+        this.currentAI = window.CONFIG.ACTIVE_AI;
         this.audioContext = null;
         
         this.initAudioSystem();
@@ -2389,7 +2832,7 @@ safePlaySound(frequency, duration, type = 'sine', volume = 0.3) {
         statsElement.innerHTML = `
             <div class="stats-card">
                 <span class="stats-icon">🤖</span>
-                <span>DeepSeek AI нашёл <strong>${shownCount}</strong> игр</span>
+                <span>AI нашёл <strong>${shownCount}</strong> игр</span>
             </div>
         `;
         
@@ -2551,3 +2994,4 @@ if (testInput) {
 } else {
     console.error('❌ Search input NOT found in DOM');
 }
+window.CONFIG = CONFIG;
