@@ -27,18 +27,32 @@ class DirectGameSearchAI {
         });
     }
 
-    async searchGames(userQuery) {
+     async searchGames(userQuery) {
         const activeAI = window.CONFIG?.ACTIVE_AI || 'deepseek';
-        console.log(`🎯 Используем AI: ${activeAI}`);
+        
+        console.log(`🎯 Using ${activeAI} via secure API`);
         
         try {
-            if (activeAI === 'gemini') {
-                return await this.searchWithGemini(userQuery);
-            } else {
-                return await this.searchWithDeepSeek(userQuery);
+            const response = await fetch('/api/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: userQuery,
+                    ai: activeAI
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('API request failed');
             }
+            
+            const data = await response.json();
+            return this.parseAIResponse(data);
+            
         } catch (error) {
-            console.error('❌ Ошибка поиска:', error);
+            console.error('❌ Secure API error:', error);
             return this.getFallbackData(userQuery);
         }
     }
