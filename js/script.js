@@ -14,7 +14,7 @@ let ADMIN_USERS = {
 async function loadConfiguration() {
     try {
         // Пробуем загрузить локальный конфиг
-        const localConfigModule = await import('/js/config.local.js');
+        const localConfigModule = await import('/config.local.js');
         if (localConfigModule.LOCAL_CONFIG) {
             const localConfig = localConfigModule.LOCAL_CONFIG;
             
