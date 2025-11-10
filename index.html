@@ -62,61 +62,76 @@
     </div>
 </header>
 
+
         <!-- Герой секция -->
-        <section class="hero">
-            <div class="glass-card hero-card">
-                <div class="hero-content">
-                    <h1 class="hero-title">
-                        Найди идеальную игру<br>
-                        <span class="gradient-text">с помощью AI</span>
-                    </h1>
-                    <p class="hero-subtitle">
-                        Просто опиши своё настроение, и наш искусственный интеллект подберёт 
-                        игры, которые идеально тебе подходят
-                    </p>
-                    
-                    <!-- Поисковая форма -->
-                    <div class="search-form">
+<section class="hero">
+    <div class="glass-card hero-card">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Найди идеальную игру<br>
+                <span class="gradient-text">с помощью AI</span>
+            </h1>
+            <p class="hero-subtitle">
+                Просто опиши своё настроение, и наш искусственный интеллект подберёт 
+                игры, которые идеально тебе подходят
+            </p>
+            
+            <!-- Поисковая форма -->
+            <!-- Поисковая форма -->
+<div class="search-form">
+    <div class="ai-selector-container">
+        <label class="ai-selector-label">Выберите Модель:</label> 
+        <div class="ai-selector">
+            <input type="radio" id="ai-deepseek" name="ai-model" value="deepseek" checked>
+            <label for="ai-deepseek" class="ai-option-label">
+                <span class="ai-option-text">DeepSeek</span>
+            </label>
+            
+            <input type="radio" id="ai-gemini" name="ai-model" value="gemini">
+            <label for="ai-gemini" class="ai-option-label">
+                <span class="ai-option-text">Gemini 2.5</span>
+            </label>
+        </div>
+    </div>
+    
     <div class="input-group">
-        <input 
-            type="text"
-            id="searchInput"
-            class="search-input"
-            placeholder="Например: 'расслабляющая игра после работы'"
-        >
-        <button id="searchBtn" class="search-btn">
-            <span class="btn-text">Найти игры</span>
-            <div class="loading-spinner hidden">
-                <div class="spinner"></div>
-                <span>AI ищет...</span>
-            </div>
-        </button>
+        <input type="text" id="searchInput" class="search-input" placeholder="Опишите, какую игру вы ищете: настроение, жанр, сеттинг.">
+        <div class="search-btn-container">
+            <button id="searchBtn" class="search-btn">
+                <span class="loading-spinner hidden">
+                    <div class="spinner"></div>
+                    <span>Ищем...</span>
+                </span>
+                <span class="btn-text">Найти Игры</span>
+            </button>
+        </div>
     </div>
 </div>
-
-                    <!-- Быстрые примеры -->
-                    <div class="quick-examples">
-                        <p>Попробуй:</p>
-                        <div class="example-chips">
-                            <button class="example-chip" data-example="Ищу популярные игры по рейтингу игр">📖 Популярные</button>
-                            <button class="example-chip" data-example="Хочу что-то расслабляющее и уютное">😌 Расслабляющее</button>
-                            <button class="example-chip" data-example="Ищу адреналиновый экшен с стрельбой">💥 Адреналин</button>
-                            <button class="example-chip" data-example="Нужна стратегия для ума">♟️ Стратегия</button>
-                        </div>
-                        <!-- Новые кнопки действий -->
-                        <div class="action-buttons">
-                            <a href="#catalog" class="action-btn action-btn-catalog">
-                                <span class="action-btn-icon">📋</span>
-                                <span>Каталог игр</span>
-                            </a>
-                            <a href="#buy" class="action-btn action-btn-buy">
-                                <span class="action-btn-icon">🛒</span>
-                                <span>Купить игру</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+            
+            <!-- Быстрые примеры -->
+            <div class="quick-examples">
+                <p>Попробуй:</p>
+                <div class="example-chips">
+                    <button class="example-chip" data-example="Ищу популярные игры по рейтингу игр">📖 Популярные</button>
+                    <button class="example-chip" data-example="Хочу что-то расслабляющее и уютное">😌 Расслабляющее</button>
+                    <button class="example-chip" data-example="Ищу адреналиновый экшен с стрельбой">💥 Адреналин</button>
+                    <button class="example-chip" data-example="Нужна стратегия для ума">♟️ Стратегия</button>
+                </div>
+                <!-- Новые кнопки действий -->
+                <div class="action-buttons">
+                    <a href="#catalog" class="action-btn action-btn-catalog">
+                        <span class="action-btn-icon">📋</span>
+                        <span>Каталог игр</span>
+                    </a>
+                    <a href="#buy" class="action-btn action-btn-buy">
+                        <span class="action-btn-icon">🛒</span>
+                        <span>Купить игру</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
         <!-- Секция результатов -->
         <section id="results" class="results-section hidden">
@@ -158,43 +173,73 @@
                 <div class="decoration-dot dot-2"></div>
                 <div class="decoration-dot dot-3"></div>
             </div>
-            <h2 class="about-title">
-                <span class="title-gradient">✨ Как это работает?</span>
-            </h2>
-            <p class="about-subtitle">Откройте мир идеальных игр с помощью передового AI и активного сообщества</p>
-        </div>
+             <h2 class="about-title">
+        <span class="about-emoji">📋</span>
+        <span class="title-gradient">Наш подход</span>
+    </h2>
+    <p class="about-subtitle">Инновационный способ находить игры, которые вам понравятся</p>
+</div>
         
         <!-- Основная сетка функций -->
         <div class="features-grid">
             <!-- Карточка 1: AI Поиск -->
             <div class="feature-card" data-aos="fade-up">
-                <div class="card-glow"></div>
-                <div class="feature-icon-wrapper">
-                    <div class="feature-icon-bg">
-                        <div class="feature-icon">🤖</div>
-                    </div>
-                    <div class="icon-orbits">
-                        <div class="orbit orbit-1"></div>
-                        <div class="orbit orbit-2"></div>
-                    </div>
-                </div>
-                <h3 class="feature-title">AI DeepSeek Поиск</h3>
-                <p class="feature-description">Опишите ваше настроение или желания, и наш искусственный интеллект проанализирует запрос и подберет идеальные игры</p>
-                <div class="feature-tags">
-                    <span class="feature-tag">
-                        <span class="tag-dot"></span>
-                        Анализ настроения
-                    </span>
-                    <span class="feature-tag">
-                        <span class="tag-dot"></span>
-                        Умный подбор
-                    </span>
-                    <span class="feature-tag">
-                        <span class="tag-dot"></span>
-                        Персонализация
-                    </span>
-                </div>
+    <div class="card-glow"></div>
+    <div class="feature-icon-wrapper">
+        <div class="feature-icon-bg">
+            <div class="feature-icon">🤖</div>
+        </div>
+        <div class="icon-orbits">
+            <div class="orbit orbit-1"></div>
+            <div class="orbit orbit-2"></div>
+        </div>
+    </div>
+    <h3 class="feature-title">Две AI Модели на Выбор</h3>
+    <p class="feature-description">
+        Используйте любую из двух мощных AI систем для поиска идеальных игр
+    </p>
+    
+    <div class="ai-models-grid">
+        <div class="ai-model-card deepseek-model">
+            <div class="model-header">
+                <div class="model-icon">🚀</div>
+                <h4 class="model-title deepseek-gradient">DeepSeek</h4>
             </div>
+            <p class="model-description">Глубокий анализ настроения и контекстный подбор</p>
+            <div class="model-features">
+                <span class="model-feature">🎯 Точный анализ</span>
+                <span class="model-feature">💭 Понимание контекста</span>
+            </div>
+        </div>
+        
+        <div class="ai-model-card gemini-model">
+            <div class="model-header">
+                <div class="model-icon">🌟</div>
+                <h4 class="model-title gemini-gradient">Gemini 2.5</h4>
+            </div>
+            <p class="model-description">Быстрый и структурированный подбор игр</p>
+            <div class="model-features">
+                <span class="model-feature">⚡ Быстрый ответ</span>
+                <span class="model-feature">📊 Структурированные данные</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="feature-tags">
+        <span class="feature-tag">
+            <span class="tag-dot"></span>
+            Выбор модели
+        </span>
+        <span class="feature-tag">
+            <span class="tag-dot"></span>
+            Максимальная точность
+        </span>
+        <span class="feature-tag">
+            <span class="tag-dot"></span>
+            AI комбо
+        </span>
+    </div>
+</div>
 
             <!-- Карточка 2: Discord Интеграция -->
             <div class="feature-card discord-feature" data-aos="fade-up" data-aos-delay="100">

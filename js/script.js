@@ -1,45 +1,70 @@
 // Конфигурация
 const CONFIG = {
-    DEEPSEEK_API_KEY: 'sk-7f36fac6978e4df0b3ee1e97534d5fc4'
+    DEEPSEEK_API_KEY: 'sk-7f36fac6978e4df0b3ee1e97534d5fc4',
+    GEMINI_API_KEY: 'AIzaSyCbsZPAQAsdzeEgj56JPImGT1WBrggkL-g',
+    ACTIVE_AI: 'gemini' // значение по умолчанию
 };
+
 
 // Основной класс приложения
 class GameFinderApp {
     constructor() {
         console.log('🎮 Initializing GameFinderApp...');
-        this.gameSearchAI = new DirectGameSearchAI();
+        
+        // Ждем пока все зависимости загрузятся
+        setTimeout(() => {
+            this.initializeAI();
+        }, 100);
+        
         this.priceAPI = window.priceAPI;
-        
-        // Инициализируем аудио систему
+        this.currentAI = 'deepseek';
         this.audioContext = null;
-        this.initAudioSystem();
         
+        this.initAudioSystem();
         this.initApp();
     }
-    
-    
-   initApp() {
-    try {
-       this.initDOMElements();
-        this.initEventListeners();
-        this.createParticles();
-        this.createStars();
-        this.createStarShower();
+
+    initializeAI() {
+        console.log('🔧 Initializing AI...');
         
-        // Добавляем все пасхалки
-        this.initEasterEggs();
-        this.initSecretClicks();
-        this.initTouchGestures();
-        this.initHiddenFeatures();
-        
-        this.setupNavigation();
-        this.setupDownloadTracking();
-        this.initScrollHeader(); // ДОБАВЬ ЭТУ СТРОЧКУ
-        
-        console.log('✅ GameFinderApp initialized successfully');
-    } catch (error) {
-        console.error('❌ Error initializing GameFinderApp:', error);
+        // Проверяем доступность DirectGameSearchAI
+        if (typeof DirectGameSearchAI === 'function') {
+            this.gameSearchAI = new DirectGameSearchAI();
+            console.log('✅ DirectGameSearchAI initialized successfully');
+        } else {
+            console.error('❌ DirectGameSearchAI class not found!');
+            console.log('📋 Available globals:', Object.keys(window).filter(key => 
+                typeof window[key] === 'function' && key.includes('AI') || key.includes('ai')
+            ));
+        }
     }
+    
+    
+    initApp() {
+        try {
+            this.initDOMElements();
+            this.initEventListeners();
+            this.createParticles();
+            this.createStars();
+            this.createStarShower();
+            
+            // Инициализируем выбор AI
+            this.initAISelector();
+            
+            this.initEasterEggs();
+            this.initSecretClicks();
+            this.initTouchGestures();
+            this.initHiddenFeatures();
+            
+            this.setupNavigation();
+            this.setupDownloadTracking();
+            this.initScrollHeader();
+            
+            console.log('✅ GameFinderApp initialized successfully');
+        } catch (error) {
+            console.error('❌ Error initializing GameFinderApp:', error);
+        }
+    
 }
     
     initAudioSystem() {
@@ -76,6 +101,176 @@ class GameFinderApp {
         }
     }
 
+     initAISelector() {
+        const aiRadios = document.querySelectorAll('input[name="ai-model"]');
+        const currentAiName = document.getElementById('current-ai-name');
+        
+        // Устанавливаем начальное значение
+        this.updateAIDisplay();
+        
+        aiRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    this.currentAI = e.target.value;
+                    console.log(`🤖 AI model changed to: ${this.currentAI}`);
+                    this.updateAIDisplay();
+                    
+                    // Воспроизводим звук переключения
+                    this.safePlaySound(523, 0.1, 'sine', 0.1);
+                }
+            });
+        });
+    }
+     updateAIDisplay() {
+        const currentAiName = document.getElementById('current-ai-name');
+        if (currentAiName) {
+            const aiNames = {
+                'deepseek': ' (DeepSeek)',
+                'gemini': ' (Gemini)'
+            };
+            currentAiName.textContent = aiNames[this.currentAI] || '';
+        }
+        
+        // Также обновляем CONFIG для direct-ai.js
+        if (typeof CONFIG !== 'undefined') {
+            CONFIG.ACTIVE_AI = this.currentAI;
+        }
+    }
+
+    getFallbackData(query = "общий запрос") {
+        console.log('🔄 Using fallback data with popular games');
+        
+        return {
+            analysis: {
+                understoodMood: "Разнообразные игровые предпочтения",
+                recommendedStyle: "Популярные игры разных жанров", 
+                keyFactors: ["универсальность", "качество", "доступность", "разнообразие"],
+                reasoning: "Подобраны 20 популярных игр, подходящих под разные вкусы и предпочтения"
+            },
+            games: [
+                {
+                    name: "The Witcher 3: Wild Hunt",
+                    genre: "RPG",
+                    description: "Эпическая RPG с богатым сюжетом и открытым миром, где вы - Геральт из Ривии, охотник на чудовищ.",
+                    moodMatch: 0.95,
+                    playtime: "50-100 часов",
+                    vibe: "Эпическая фэнтези-сага",
+                    whyPerfect: "Идеально подходит для любителей глубоких сюжетов и моральных выборов",
+                    platforms: ["PC", "PS4", "XBOX", "Switch"],
+                    reviewPercent: 93,
+                    reviewCount: 850000
+                },
+                {
+                    name: "Cyberpunk 2077",
+                    genre: "Action RPG", 
+                    description: "Футуристический экшен-RPG в открытом мире Найт-Сити с продвинутыми киберимплантами.",
+                    moodMatch: 0.88,
+                    playtime: "40-80 часов",
+                    vibe: "Киберпанк-антиутопия",
+                    whyPerfect: "Отличный выбор для любителей научной фантастики и нелинейных сюжетов",
+                    platforms: ["PC", "PS5", "XBOX Series X"],
+                    reviewPercent: 86,
+                    reviewCount: 520000
+                },
+                {
+                    name: "Red Dead Redemption 2",
+                    genre: "Action-Adventure",
+                    description: "Приключенческий боевик о жизни бандитов на Диком Западе в эпоху заката ковбоев.",
+                    moodMatch: 0.92,
+                    playtime: "60-100 часов", 
+                    vibe: "Вестерн-эпопея",
+                    whyPerfect: "Погружает в атмосферу Дикого Запада с детализированным миром",
+                    platforms: ["PC", "PS4", "XBOX"],
+                    reviewPercent: 90,
+                    reviewCount: 680000
+                },
+                {
+                    name: "Baldur's Gate 3",
+                    genre: "RPG",
+                    description: "Глубокая RPG на основе D&D с тактическими боями и множеством вариантов развития сюжета.",
+                    moodMatch: 0.94,
+                    playtime: "80-150 часов",
+                    vibe: "Фэнтези-приключение", 
+                    whyPerfect: "Идеальна для любителей тактических сражений и сложных диалогов",
+                    platforms: ["PC", "PS5", "XBOX Series X"],
+                    reviewPercent: 96,
+                    reviewCount: 420000
+                },
+                {
+                    name: "Elden Ring",
+                    genre: "Action RPG",
+                    description: "Сложная action-RPG с открытым миром от создателей Dark Souls.",
+                    moodMatch: 0.87,
+                    playtime: "70-120 часов",
+                    vibe: "Мрачное фэнтези",
+                    whyPerfect: "Подходит для игроков, ищущих сложный вызов и исследование",
+                    platforms: ["PC", "PS4", "PS5", "XBOX"],
+                    reviewPercent: 89,
+                    reviewCount: 580000
+                },
+                {
+                    name: "Grand Theft Auto V",
+                    genre: "Action-Adventure", 
+                    description: "Криминальный экшен в открытом мире Лос-Сантоса с тремя протагонистами.",
+                    moodMatch: 0.85,
+                    playtime: "30-80 часов",
+                    vibe: "Криминальная сатира",
+                    whyPerfect: "Отлично подходит для любителей свободы действий и черного юмора",
+                    platforms: ["PC", "PS4", "PS5", "XBOX"],
+                    reviewPercent: 91,
+                    reviewCount: 1200000
+                },
+                {
+                    name: "The Legend of Zelda: Breath of the Wild",
+                    genre: "Action-Adventure",
+                    description: "Приключенческий экшен с открытым миром Хайрула и физическим движком.",
+                    moodMatch: 0.93,
+                    playtime: "50-100 часов",
+                    vibe: "Приключенческое фэнтези", 
+                    whyPerfect: "Идеальна для исследователей и любителей головоломок",
+                    platforms: ["Switch", "Wii U"],
+                    reviewPercent: 94,
+                    reviewCount: 350000
+                },
+                {
+                    name: "God of War (2018)",
+                    genre: "Action-Adventure",
+                    description: "Эпическое приключение Кратоса и его сына Атрея по скандинавским мифам.",
+                    moodMatch: 0.91,
+                    playtime: "25-40 часов",
+                    vibe: "Мифологический эпос",
+                    whyPerfect: "Отличный выбор для любителей качественных нарративов и динамичных боев",
+                    platforms: ["PC", "PS4"],
+                    reviewPercent: 92,
+                    reviewCount: 480000
+                },
+                {
+                    name: "Minecraft",
+                    genre: "Sandbox",
+                    description: "Песочница с бесконечными возможностями для творчества и выживания.",
+                    moodMatch: 0.82,
+                    playtime: "Бесконечно",
+                    vibe: "Творческая песочница",
+                    whyPerfect: "Подходит для расслабленного творчества и строительства",
+                    platforms: ["PC", "Все консоли", "Мобильные"],
+                    reviewPercent: 88,
+                    reviewCount: 2500000
+                },
+                {
+                    name: "Counter-Strike 2", 
+                    genre: "FPS",
+                    description: "Командный тактический шутер с соревновательными матчами и точной стрельбой.",
+                    moodMatch: 0.79,
+                    playtime: "Бесконечно",
+                    vibe: "Командное соперничество",
+                    whyPerfect: "Идеален для любителей соревновательных игр и тактики",
+                    platforms: ["PC"],
+                    reviewPercent: 85,
+                    reviewCount: 1800000
+                }
+            ]
+        };
+    }
     initScrollHeader() {
     let lastScrollY = window.scrollY;
     const header = document.querySelector('.header');
@@ -108,6 +303,7 @@ class GameFinderApp {
     // Инициализация при загрузке
     handleScroll();
 }
+
 
 initEasterEggs() {
     let konamiCode = [];
@@ -1880,6 +2076,8 @@ showNotification(message, type = 'info') {
             this.searchInput.addEventListener('input', this.autoResizeTextarea);
         }
 
+        
+
         // Быстрые примеры
         if (this.exampleChips.length > 0) {
         this.exampleChips.forEach(chip => {
@@ -1899,44 +2097,64 @@ showNotification(message, type = 'info') {
         console.log('🎯 Event listeners attached');
     }
 
-    autoResizeTextarea() {
-        this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 200) + 'px';
-    }
+    
     
 
-    async handleSearch() {
-    try {
-        const query = this.searchInput ? this.searchInput.value.trim() : '';
-        console.log('🔍 Handle search called with query:', query);
-        
-        if (!query) {
-            this.showError('Пожалуйста, введите описание того, что вы ищете');
-            return;
+     async handleSearch() {
+        try {
+            const query = this.searchInput ? this.searchInput.value.trim() : '';
+            console.log('🔍 Handle search called with query:', query);
+            
+            if (!query) {
+                this.showError('Пожалуйста, введите описание того, что вы ищете');
+                return;
+            }
+
+            if (query.length < 3) {
+                this.showError('Запрос должен содержать хотя бы 3 символа');
+                return;
+            }
+
+            // ПРОВЕРКА: существует ли gameSearchAI
+            if (!this.gameSearchAI) {
+                this.showError('AI система не инициализирована. Пожалуйста, обновите страницу.');
+                console.error('❌ gameSearchAI is null or undefined');
+                return;
+            }
+
+            // ПРОВЕРКА: является ли searchGames функцией
+            if (typeof this.gameSearchAI.searchGames !== 'function') {
+                this.showError('Метод поиска недоступен. Проверьте консоль для деталей.');
+                console.error('❌ gameSearchAI.searchGames is not a function');
+                console.log('🔍 gameSearchAI object:', this.gameSearchAI);
+                console.log('🔍 Available methods:', Object.keys(this.gameSearchAI));
+                return;
+            }
+
+            this.setLoading(true);
+            this.hideError();
+
+            console.log(`🚀 Starting ${this.currentAI} AI search...`);
+            console.log('🔧 gameSearchAI object:', this.gameSearchAI);
+            
+            // Обновляем CONFIG перед поиском
+            if (typeof CONFIG !== 'undefined') {
+                CONFIG.ACTIVE_AI = this.currentAI;
+            }
+            
+            const results = await this.gameSearchAI.searchGames(query);
+            console.log('✅ Search results received:', results);
+            
+            this.displayResults(results);
+            
+        } catch (error) {
+            console.error('❌ Search error:', error);
+            this.showError('Ошибка при поиске: ' + error.message);
+        } finally {
+            this.setLoading(false);
         }
-
-        if (query.length < 3) {
-            this.showError('Запрос должен содержать хотя бы 3 символа');
-            return;
-        }
-
-        this.setLoading(true);
-        this.hideError();
-
-        console.log('🚀 Starting AI search...');
-        
-        const results = await this.gameSearchAI.searchGames(query);
-        console.log('✅ Search results received:', results);
-        
-        this.displayResults(results);
-        
-    } catch (error) {
-        console.error('❌ Search error:', error);
-        this.showError(error.message);
-    } finally {
-        this.setLoading(false);
     }
-}
+
 
 safePlaySound(frequency, duration, type = 'sine', volume = 0.3) {
     if (!this.audioContext) {

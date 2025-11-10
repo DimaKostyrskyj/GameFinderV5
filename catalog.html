@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GameFinders — Магазин кодов активации</title>
+  <!-- Подключаем тот же CSS — дизайн остаётся ровно таким же -->
+  <link rel="stylesheet" href="./styles/style.css" />
+</head>
+<body>
+  <div class="animated-bg"></div>
+  <div class="particles-container" id="particles"></div>
+
+  <div class="container">
+    <!-- Копия хедера, чтобы стиль совпадал РОВНО как на основной странице -->
+    <header class="header">
+      <div class="glass-card header-content">
+        <nav class="nav-left">
+          <a href="./index.html#search" class="nav-btn">
+            <div class="nav-icon">🔍</div>
+            <span class="nav-text">Поиск</span>
+          </a>
+          <a href="./index.html#about" class="nav-btn">
+            <div class="nav-icon">ℹ️</div>
+            <span class="nav-text">О проекте</span>
+          </a>
+        </nav>
+
+        <a href="./index.html" class="logo-center">
+          <div class="logo-icon">🎮</div>
+          <h1 class="logo-title">GameFinders</h1>
+        </a>
+
+        <nav class="nav-right">
+          <a href="#catalog" class="nav-btn nav-btn-catalog">
+            <div class="nav-icon">📋</div>
+            <span class="nav-text">Каталог</span>
+          </a>
+          <a href="#catalog" class="nav-btn nav-btn-buy">
+            <div class="nav-icon">🛒</div>
+            <span class="nav-text">Купить игру</span>
+          </a>
+           <a href="https://discord.gg/ArQ7C5s4Jg" class="nav-btn discord-btn" target="_blank">
+                <div class="nav-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.25c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
+                    </svg>
+                </div>
+                <span class="nav-text">Discord</span>
+            </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Контент страницы каталога -->
+    <main style="padding: 140px 0 60px;">
+      <section id="catalog" class="results-section">
+        <div class="glass-card results-card">
+          <h2 style="margin-bottom:20px; text-align:center;">🛒 Магазин — коды активации</h2>
+
+          <p style="text-align:center; color: rgba(255,255,255,0.8); margin-bottom:20px;">Здесь собраны доступные ключи активации — выберите игру и купите код.</p>
+
+          <div class="games-grid">
+            <h3>Доступные игры</h3>
+            <div class="games-container" id="catalogGames">
+              <!-- Примеры карточек; можно динамически заполнять через JS -->
+
+              <div class="game-card">
+                <div class="game-header">
+                  <div class="game-title-section">
+                    <div class="game-title">Hades II</div>
+                    <div class="game-meta">
+                      <span class="game-platforms">PC</span>
+                      <span class="game-platforms">Steam</span>
+                    </div>
+                  </div>
+                  <div class="match-score">
+                    <div class="score-circle">9.2</div>
+                    <div class="score-label">Рейтинг</div>
+                  </div>
+                </div>
+                <p class="game-description">Экшн-роулер в мире мифов — новый хит.</p>
+                <div class="game-details">
+                  <div class="detail-item"><span class="detail-icon">⌛</span> Доставка: мгновенная</div>
+                  <div class="detail-item"><span class="detail-icon">🔑</span> Тип: Ключ активации (Steam)</div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:12px;">
+                  <button class="buy-btn nav-btn download-btn" data-title="Hades II" data-price="9.99">Купить за $9.99</button>
+                  <a class="nav-btn" href="#" onclick="window.open('https://store.example.com/hades2','_blank')">О магазине</a>
+                </div>
+              </div>
+
+              <div class="game-card">
+                <div class="game-header">
+                  <div class="game-title-section">
+                    <div class="game-title">Cozy Grove</div>
+                    <div class="game-meta">
+                      <span class="game-platforms">PC</span>
+                      <span class="game-platforms">Epic</span>
+                    </div>
+                  </div>
+                  <div class="match-score">
+                    <div class="score-circle">8.1</div>
+                    <div class="score-label">Рейтинг</div>
+                  </div>
+                </div>
+                <p class="game-description">Уютная игра для релакса.</p>
+                <div class="game-details">
+                  <div class="detail-item"><span class="detail-icon">⌛</span> Доставка: мгновенная</div>
+                  <div class="detail-item"><span class="detail-icon">🔑</span> Тип: Ключ активации (Epic)</div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:12px;">
+                  <button class="buy-btn nav-btn download-btn" data-title="Cozy Grove" data-price="4.99">Купить за $4.99</button>
+                  <a class="nav-btn" href="#" onclick="window.open('https://store.example.com/cozygrove','_blank')">О магазине</a>
+                </div>
+              </div>
+
+              <!-- Ещё карточки можно добавить по тому же шаблону -->
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Модал покупки (тот же визуальный стиль) -->
+    <div id="buyModal" class="glass-card" style="position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); max-width:560px; width:90%; padding:24px; display:none; z-index:10001;">
+      <h3 id="modalTitle">Покупка</h3>
+      <p id="modalDesc" style="color:var(--text-gray);">Подтвердите покупку и получите код активации мгновенно.</p>
+
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <input id="buyerName" class="search-input" placeholder="Ваше имя" style="flex:1; padding:10px;" />
+        <input id="buyerEmail" class="search-input" placeholder="Email для отправки кода" style="flex:1; padding:10px;" />
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:16px; justify-content:flex-end;">
+        <button id="cancelBuy" class="nav-btn">Отмена</button>
+        <button id="confirmBuy" class="nav-btn download-btn">Подтвердить и купить</button>
+      </div>
+
+      <div id="buyResult" style="margin-top:12px; display:none; word-break:break-all;">
+        <!-- Здесь появится сгенерированный ключ -->
+      </div>
+    </div>
+
+    <div id="modalBackdrop" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; z-index:10000;"></div>
+
+  </div>
+
+  <script>
+    // Локальная логика покупки — демонстрация. Никаких реальных платежей.
+    document.addEventListener('DOMContentLoaded', () => {
+      const buyButtons = document.querySelectorAll('.buy-btn');
+      const buyModal = document.getElementById('buyModal');
+      const modalBackdrop = document.getElementById('modalBackdrop');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDesc = document.getElementById('modalDesc');
+      const buyerName = document.getElementById('buyerName');
+      const buyerEmail = document.getElementById('buyerEmail');
+      const cancelBuy = document.getElementById('cancelBuy');
+      const confirmBuy = document.getElementById('confirmBuy');
+      const buyResult = document.getElementById('buyResult');
+
+      let current = {};
+
+      function openModal(gameTitle, price) {
+        current.title = gameTitle;
+        current.price = price;
+        modalTitle.textContent = `Купить: ${gameTitle}`;
+        modalDesc.textContent = `Цена: $${price}. Введите e-mail и подтвердите покупку — код будет показан мгновенно.`;
+        buyerName.value = '';
+        buyerEmail.value = '';
+        buyResult.style.display = 'none';
+        modalBackdrop.style.display = 'block';
+        buyModal.style.display = 'block';
+      }
+
+      function closeModal() {
+        buyModal.style.display = 'none';
+        modalBackdrop.style.display = 'none';
+      }
+
+      buyButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const title = btn.dataset.title || 'Игра';
+          const price = btn.dataset.price || '0.00';
+          openModal(title, price);
+        });
+      });
+
+      cancelBuy.addEventListener('click', closeModal);
+      modalBackdrop.addEventListener('click', closeModal);
+
+      confirmBuy.addEventListener('click', () => {
+        // Простая валидация
+        if (!buyerEmail.value) {
+          alert('Пожалуйста, укажите email для получения кода.');
+          return;
+        }
+
+        // Сгенерируем демонстрационный код (безопасно)
+        const code = `${current.title.replace(/[^A-Z0-9]/ig,'').slice(0,6).toUpperCase()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+        buyResult.style.display = 'block';
+        buyResult.innerHTML = `<strong>Спасибо, ${buyerName.value || 'покупатель'}!</strong><br>Ваш код активации для <strong>${current.title}</strong>: <br><div style=\"margin-top:8px; padding:12px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08);\"><code>${code}</code></div><p style=\"margin-top:8px; color:var(--text-gray);\">Код отправлен на: <strong>${buyerEmail.value}</strong> (демо — реальной отправки нет).</p>`;
+
+        // Имитация отправки письма / сохранения — в реальном проекте здесь бы был запрос на сервер
+        confirmBuy.disabled = true;
+        setTimeout(() => {
+          confirmBuy.disabled = false;
+        }, 2000);
+      });
+    });
+  </script>
+</body>
+</html>
