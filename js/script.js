@@ -12,31 +12,47 @@ let ADMIN_USERS = {
 
 // Функция загрузки конфигурации
 async function loadConfiguration() {
-    try {
-        // Пробуем загрузить локальный конфиг
-        const localConfigModule = await import('/config.local.js');
-        if (localConfigModule.LOCAL_CONFIG) {
-            const localConfig = localConfigModule.LOCAL_CONFIG;
-            
-            // Обновляем CONFIG
-            if (localConfig.API_KEYS) {
-                CONFIG.DEEPSEEK_API_KEY = localConfig.API_KEYS.DEEPSEEK_API_KEY || CONFIG.DEEPSEEK_API_KEY;
-                CONFIG.GEMINI_API_KEY = localConfig.API_KEYS.GEMINI_API_KEY || CONFIG.GEMINI_API_KEY;
+    // Пробуем загрузить из process.env (Vercel)
+    if (typeof process !== 'undefined' && process.env) {
+        try {
+            // Админы из env переменной
+            if (process.env.ADMIN_USERS) {
+                ADMIN_USERS = JSON.parse(process.env.ADMIN_USERS);
             }
             
-            // Обновляем ADMIN_USERS
-            if (localConfig.ADMIN_USERS) {
-                ADMIN_USERS = localConfig.ADMIN_USERS;
+            // API ключи
+            if (process.env.DEEPSEEK_API_KEY) {
+                CONFIG.DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+            }
+            if (process.env.GEMINI_API_KEY) {
+                CONFIG.GEMINI_API_KEY = process.env.GEMINI_API_KEY;
             }
             
-            console.log('✅ Загружена локальная конфигурация');
+            console.log('✅ Загружена конфигурация из Environment Variables');
             return true;
+        } catch (error) {
+            console.error('❌ Ошибка загрузки env конфига:', error);
         }
-    } catch (error) {
-        console.log('⚠️ Локальная конфигурация не найдена, используем демо-режим');
     }
     
-    console.warn('🚨 Работаем в демо-режиме! Создайте js/config.local.js');
+    // Fallback: пробуем загрузить из window.LOCAL_CONFIG
+    if (window.LOCAL_CONFIG) {
+        const localConfig = window.LOCAL_CONFIG;
+        
+        if (localConfig.API_KEYS) {
+            CONFIG.DEEPSEEK_API_KEY = localConfig.API_KEYS.DEEPSEEK_API_KEY;
+            CONFIG.GEMINI_API_KEY = localConfig.API_KEYS.GEMINI_API_KEY;
+        }
+        
+        if (localConfig.ADMIN_USERS) {
+            ADMIN_USERS = localConfig.ADMIN_USERS;
+        }
+        
+        console.log('✅ Загружена локальная конфигурация');
+        return true;
+    }
+    
+    console.warn('🚨 Работаем в демо-режиме!');
     return false;
 }
 
