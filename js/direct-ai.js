@@ -3,63 +3,40 @@ console.log('🔧 Loading DirectGameSearchAI class...');
 
 class DirectGameSearchAI {
     constructor() {
-        this.validateConfig();
+        this.deepseekApiKey = 'sk-7f36fac6978e4df0b3ee1e97534d5fc4';
         this.deepseekBaseURL = 'https://api.deepseek.com/chat/completions';
+        
+        // ПРАВИЛЬНЫЙ URL для Gemini - используем gemini-2.5-flash
         this.geminiBaseURL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-        
-        console.log('🔧 DirectGameSearchAI инициализирован');
+        this.geminiApiKey = 'AIzaSyAQhlLbVo9GRHCaeLOfCMxh9GiFfIOEpO0';
     }
 
-    validateConfig() {
-        const config = window.CONFIG || {};
-        
-        this.deepseekApiKey = config.DEEPSEEK_API_KEY || 'demo-deepseek-key';
-        this.geminiApiKey = config.GEMINI_API_KEY || 'demo-gemini-key';
-        
-        console.log('🔐 Статус API ключей:', {
-            deepseek: this.deepseekApiKey !== 'demo-deepseek-key' ? '✅ Реальный' : '⚠️ Демо',
-            gemini: this.geminiApiKey !== 'demo-gemini-key' ? '✅ Реальный' : '⚠️ Демо'
-        });
-    }
+    // ДОБАВЬТЕ ВСЕ МЕТОДЫ КЛАССА:
 
-     async searchGames(userQuery) {
-        const activeAI = window.CONFIG?.ACTIVE_AI || 'deepseek';
-        
-        console.log(`🎯 Using ${activeAI} via secure API`);
+    async searchGames(userQuery) {
+        console.log('🎯 DirectGameSearchAI.searchGames method called with:', userQuery);
         
         try {
-            const response = await fetch('/api/search', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: userQuery,
-                    ai: activeAI
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error('API request failed');
+            if (!userQuery || userQuery.trim() === '') {
+                throw new Error('Поисковый запрос не может быть пустым');
+            }
+
+            console.log('🤖 Using AI model:', CONFIG?.ACTIVE_AI || 'deepseek');
+
+            if (CONFIG?.ACTIVE_AI === 'gemini') {
+                return await this.searchWithGemini(userQuery);
+            } else {
+                return await this.searchWithDeepSeek(userQuery);
             }
             
-            const data = await response.json();
-            return this.parseAIResponse(data);
-            
         } catch (error) {
-            console.error('❌ Secure API error:', error);
-            return this.getFallbackData(userQuery);
+            console.error('❌ AI search error:', error);
+            throw error;
         }
     }
 
     async searchWithGemini(userQuery) {
         console.log('🚀 Using Gemini AI');
-        
-        // Проверяем API ключ
-        if (!this.geminiApiKey || this.geminiApiKey === 'demo-gemini-key') {
-            console.warn('⚠️ Используется демо-ключ Gemini, переключаемся на DeepSeek');
-            return await this.searchWithDeepSeek(userQuery);
-        }
         
         try {
             const prompt = this.createGeminiPrompt(userQuery);
@@ -70,31 +47,19 @@ class DirectGameSearchAI {
                 }],
                 generationConfig: {
                     temperature: 0.7,
-                    maxOutputTokens: 8000,
-                    topP: 0.8,
-                    topK: 40
-                },
-                safetySettings: [
-                    {
-                        category: "HARM_CATEGORY_HARASSMENT",
-                        threshold: "BLOCK_NONE"
-                    },
-                    {
-                        category: "HARM_CATEGORY_HATE_SPEECH", 
-                        threshold: "BLOCK_NONE"
-                    }
-                ]
+                    maxOutputTokens: 4000,
+                }
             };
 
             console.log('📡 Making API request to Gemini...');
             
+            // ПРАВИЛЬНЫЙ URL с правильной моделью
             const response = await fetch(
-                `${this.geminiBaseURL}?key=${this.geminiApiKey}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.geminiApiKey}`,
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                    'X-Goog-Api-Key': this.geminiApiKey
                     },
                     body: JSON.stringify(requestData)
                 }
@@ -116,15 +81,14 @@ class DirectGameSearchAI {
             }
 
             const data = await response.json();
-            console.log('✅ Gemini raw response received:', data);
+            console.log('✅ Gemini raw response received');
 
             if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-                console.error('❌ Invalid Gemini response structure:', data);
                 throw new Error('Некорректный ответ от Gemini API');
             }
 
             const content = data.candidates[0].content.parts[0].text;
-            console.log('📝 Gemini content received:', content.substring(0, 500) + '...');
+            console.log('📝 Gemini content received');
 
             if (!content) {
                 throw new Error('Пустой ответ от Gemini');
@@ -150,12 +114,6 @@ class DirectGameSearchAI {
     async searchWithDeepSeek(userQuery) {
         console.log('🚀 Using DeepSeek AI');
         
-        // Проверяем API ключ
-        if (!this.deepseekApiKey || this.deepseekApiKey === 'demo-deepseek-key') {
-            console.warn('⚠️ Используется демо-ключ DeepSeek, возвращаем fallback данные');
-            return this.getFallbackData(userQuery);
-        }
-        
         try {
             const prompt = this.createDeepSeekPrompt(userQuery);
             
@@ -167,7 +125,7 @@ class DirectGameSearchAI {
                         'content': prompt
                     }
                 ],
-                'max_tokens': 8000,
+                'max_tokens': 4000,
                 'temperature': 0.7,
                 'stream': false
             };
@@ -189,13 +147,7 @@ class DirectGameSearchAI {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('❌ DeepSeek API error:', response.status, errorText);
-                
-                let errorMessage = 'Ошибка сервера DeepSeek';
-                if (response.status === 401) errorMessage = 'Неверный API ключ DeepSeek';
-                if (response.status === 429) errorMessage = 'Превышен лимит запросов DeepSeek';
-                if (response.status === 400) errorMessage = 'Неверный запрос к DeepSeek';
-                
-                throw new Error(`DeepSeek API: ${errorMessage}`);
+                throw new Error(`DeepSeek API error: ${response.status}`);
             }
 
             const data = await response.json();
@@ -206,7 +158,7 @@ class DirectGameSearchAI {
             }
 
             const content = data.choices[0].message.content;
-            console.log('📝 DeepSeek content received:', content.substring(0, 500) + '...');
+            console.log('📝 DeepSeek content received');
 
             if (!content) {
                 throw new Error('Пустой ответ от DeepSeek');
@@ -223,102 +175,31 @@ class DirectGameSearchAI {
             
         } catch (error) {
             console.error('❌ DeepSeek search error:', error);
-            // Возвращаем fallback данные если оба AI не работают
-            console.log('🔄 Returning fallback data');
-            return this.getFallbackData(userQuery);
+            throw error;
         }
     }
 
     createGeminiPrompt(query) {
-        return `Ты - эксперт по видеоиграм. Пользователь ищет игры по запросу: "${query}".
+        return `Пользователь ищет игры по запросу: "${query}". 
 
-ВАЖНЫЕ ИНСТРУКЦИИ:
-1. ВЕРНИ ТОЛЬКО JSON БЕЗ ЛЮБЫХ ДОПОЛНИТЕЛЬНЫХ ТЕКСТОВ, КОММЕНТАРИЕВ ИЛИ MARKDOWN
-2. В массиве games ДОЛЖНО БЫТЬ РОВНО 20 ИГР
-3. Все игры должны быть реально существующими и популярными
-4. Используй актуальные данные на 2024-2025 год
-5. Все поля должны быть заполнены
-
-JSON структура:
+Верни ТОЛЬКО JSON без каких-либо дополнительных текстов:
 
 {
     "analysis": {
-        "understoodMood": "краткое описание настроения запроса (2-3 слова)",
-        "recommendedStyle": "основной стиль игр", 
-        "keyFactors": ["ключевой фактор 1", "ключевой фактор 2", "ключевой фактор 3"],
-        "reasoning": "краткое объяснение подбора (1 предложение)"
-    },
-    "games": [
-        {
-            "name": "Реальное название игры",
-            "genre": "Основной жанр",
-            "description": "Краткое описание игры (2-3 предложения)",
-            "moodMatch": 0.95,
-            "playtime": "Основное время прохождения",
-            "vibe": "Атмосфера игры",
-            "whyPerfect": "Почему подходит под запрос",
-            "platforms": ["PC", "PS5", "XBOX"],
-            "reviewPercent": 95,
-            "reviewCount": 500000
-        }
-    ]
-}
-
-Пример заполнения для запроса "эпические RPG":
-{
-    "analysis": {
-        "understoodMood": "эпические приключения",
-        "recommendedStyle": "сюжетные RPG", 
-        "keyFactors": ["глубина сюжета", "масштаб мира", "развитие персонажа"],
-        "reasoning": "Подобраны лучшие RPG с богатым сюжетом и огромными мирами"
-    },
-    "games": [
-        {
-            "name": "The Witcher 3: Wild Hunt",
-            "genre": "RPG",
-            "description": "Эпическая RPG в мире фэнтези, где вы Геральт из Ривии, охотник на чудовищ. Исследуйте огромный мир, принимайте моральные выборы и сражайтесь с опасными существами.",
-            "moodMatch": 0.98,
-            "playtime": "50-100 часов",
-            "vibe": "Темное фэнтези",
-            "whyPerfect": "Одна из лучших RPG всех времен с глубоким сюжетом",
-            "platforms": ["PC", "PS4", "PS5", "XBOX", "Switch"],
-            "reviewPercent": 93,
-            "reviewCount": 850000
-        }
-    ]
-}
-
-ВЕРНИ РОВНО 20 ИГР В МАССИВЕ GAMES!`;
-    }
-
-    createDeepSeekPrompt(query) {
-        return `Ты - эксперт по видеоиграм. Пользователь ищет игры по запросу: "${query}".
-
-ВАЖНЫЕ ИНСТРУКЦИИ:
-1. ВЕРНИ ТОЛЬКО JSON БЕЗ ЛЮБЫХ ДОПОЛНИТЕЛЬНЫХ ТЕКСТОВ, КОММЕНТАРИЕВ ИЛИ MARKDOWN
-2. В массиве games ДОЛЖНО БЫТЬ РОВНО 20 ИГР
-3. Все игры должны быть реально существующими и популярными
-4. Используй актуальные данные на 2024-2025 год
-5. Все поля должны быть заполнены
-
-JSON структура:
-
-{
-    "analysis": {
-        "understoodMood": "краткое описание настроения запроса",
-        "recommendedStyle": "основной стиль игр", 
-        "keyFactors": ["ключевой фактор 1", "ключевой фактор 2", "ключевой фактор 3"],
+        "understoodMood": "краткое описание настроения",
+        "recommendedStyle": "стиль игр", 
+        "keyFactors": ["фактор1", "фактор2", "фактор3"],
         "reasoning": "краткое объяснение подбора"
     },
     "games": [
         {
-            "name": "Реальное название игры",
-            "genre": "Основной жанр",
-            "description": "Краткое описание игры",
+            "name": "Название игры 1",
+            "genre": "Жанр",
+            "description": "Описание игры",
             "moodMatch": 0.95,
-            "playtime": "Основное время прохождения",
-            "vibe": "Атмосфера игры",
-            "whyPerfect": "Почему подходит под запрос",
+            "playtime": "Время игры",
+            "vibe": "Атмосфера",
+            "whyPerfect": "Почему подходит",
             "platforms": ["PC", "PS5"],
             "reviewPercent": 95,
             "reviewCount": 500000
@@ -326,7 +207,38 @@ JSON структура:
     ]
 }
 
-ВЕРНИ РОВНО 20 ИГР В МАССИВЕ GAMES! Игры должны быть реально существующими и популярными на 2024-2025 год.`;
+ВАЖНО: Верни РОВНО 20 игр в массиве games. Игры должны быть реально существующими и популярными.`;
+    }
+
+    createDeepSeekPrompt(query) {
+        return `Пользователь ищет игры по запросу: "${query}". 
+
+Верни ТОЛЬКО JSON без каких-либо дополнительных текстов:
+
+{
+    "analysis": {
+        "understoodMood": "краткое описание настроения",
+        "recommendedStyle": "стиль игр", 
+        "keyFactors": ["фактор1", "фактор2", "фактор3"],
+        "reasoning": "краткое объяснение подбора"
+    },
+    "games": [
+        {
+            "name": "Название игры 1",
+            "genre": "Жанр",
+            "description": "Описание игры",
+            "moodMatch": 0.95,
+            "playtime": "Время игры",
+            "vibe": "Атмосфера",
+            "whyPerfect": "Почему подходит",
+            "platforms": ["PC", "PS5"],
+            "reviewPercent": 95,
+            "reviewCount": 500000
+        }
+    ]
+}
+
+ВАЖНО: Верни РОВНО 20 игр в массиве games. Игры должны быть реально существующими и популярными на дату 08.11.2025 года.`;
     }
 
     parseAIResponse(content) {
@@ -455,7 +367,7 @@ JSON структура:
                            originalContent.match(/'name':\s*'([^']+)'/g) ||
                            [];
         
-        const extractedGames = gameMatches.slice(0, 20).map((match, index) => {
+        const extractedGames = gameMatches.slice(0, 10).map((match, index) => {
             const name = match.replace(/"name":\s*"([^"]+)"/, '$1').replace(/'name':\s*'([^']+)'/, '$1');
             return {
                 name: name || `Игра ${index + 1}`,
@@ -478,74 +390,21 @@ JSON структура:
                 keyFactors: ["доступность", "популярность", "качество"],
                 reasoning: "AI предоставил ответ с ошибками формата, но мы извлекли некоторые рекомендации"
             },
-            games: extractedGames.length > 0 ? extractedGames : this.getPopularGames()
+            games: extractedGames.length > 0 ? extractedGames : [
+                {
+                    name: "The Witcher 3: Wild Hunt",
+                    genre: "RPG",
+                    description: "Эпическая RPG с богатым сюжетом",
+                    moodMatch: 0.95,
+                    playtime: "50-100 часов",
+                    vibe: "Фэнтези-эпопея",
+                    whyPerfect: "Классика жанра RPG",
+                    platforms: ["PC", "PS4", "XBOX"],
+                    reviewPercent: 93,
+                    reviewCount: 850000
+                }
+            ]
         };
-    }
-
-    getPopularGames() {
-        // Fallback список популярных игр
-        return [
-            {
-                name: "The Witcher 3: Wild Hunt",
-                genre: "RPG",
-                description: "Эпическая RPG с богатым сюжетом и открытым миром",
-                moodMatch: 0.95,
-                playtime: "50-100 часов",
-                vibe: "Фэнтези-эпопея",
-                whyPerfect: "Классика жанра RPG",
-                platforms: ["PC", "PS4", "XBOX", "Switch"],
-                reviewPercent: 93,
-                reviewCount: 850000
-            },
-            {
-                name: "Cyberpunk 2077",
-                genre: "Action RPG", 
-                description: "Футуристический экшен-RPG в открытом мире Найт-Сити",
-                moodMatch: 0.88,
-                playtime: "40-80 часов",
-                vibe: "Киберпанк-антиутопия",
-                whyPerfect: "Отличный выбор для любителей научной фантастики",
-                platforms: ["PC", "PS5", "XBOX Series X"],
-                reviewPercent: 86,
-                reviewCount: 520000
-            },
-            {
-                name: "Red Dead Redemption 2",
-                genre: "Action-Adventure",
-                description: "Приключенческий боевик о жизни бандитов на Диком Западе",
-                moodMatch: 0.92,
-                playtime: "60-100 часов", 
-                vibe: "Вестерн-эпопея",
-                whyPerfect: "Погружает в атмосферу Дикого Запада",
-                platforms: ["PC", "PS4", "XBOX"],
-                reviewPercent: 90,
-                reviewCount: 680000
-            },
-            {
-                name: "Baldur's Gate 3",
-                genre: "RPG",
-                description: "Глубокая RPG на основе D&D с тактическими боями",
-                moodMatch: 0.94,
-                playtime: "80-150 часов",
-                vibe: "Фэнтези-приключение", 
-                whyPerfect: "Идеальна для любителей тактических сражений",
-                platforms: ["PC", "PS5", "XBOX Series X"],
-                reviewPercent: 96,
-                reviewCount: 420000
-            },
-            {
-                name: "Elden Ring",
-                genre: "Action RPG",
-                description: "Сложная action-RPG с открытым миром",
-                moodMatch: 0.87,
-                playtime: "70-120 часов",
-                vibe: "Мрачное фэнтези",
-                whyPerfect: "Подходит для игроков, ищущих сложный вызов",
-                platforms: ["PC", "PS4", "PS5", "XBOX"],
-                reviewPercent: 89,
-                reviewCount: 580000
-            }
-        ].slice(0, 20);
     }
 }
 
