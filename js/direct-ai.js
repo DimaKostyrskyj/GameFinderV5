@@ -7,11 +7,7 @@ class DirectGameSearchAI {
         this.deepseekBaseURL = 'https://api.deepseek.com/chat/completions';
         this.geminiBaseURL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
         
-        console.log('🔧 DirectGameSearchAI инициализирован с конфигом:', {
-            hasDeepseekKey: this.deepseekApiKey !== 'demo-deepseek-key',
-            hasGeminiKey: this.geminiApiKey !== 'demo-gemini-key',
-            activeAI: window.CONFIG?.ACTIVE_AI || 'deepseek'
-        });
+        console.log('🔧 DirectGameSearchAI инициализирован');
     }
 
     validateConfig() {
@@ -20,7 +16,6 @@ class DirectGameSearchAI {
         this.deepseekApiKey = config.DEEPSEEK_API_KEY || 'demo-deepseek-key';
         this.geminiApiKey = config.GEMINI_API_KEY || 'demo-gemini-key';
         
-        // Логируем статус ключей
         console.log('🔐 Статус API ключей:', {
             deepseek: this.deepseekApiKey !== 'demo-deepseek-key' ? '✅ Реальный' : '⚠️ Демо',
             gemini: this.geminiApiKey !== 'demo-gemini-key' ? '✅ Реальный' : '⚠️ Демо'

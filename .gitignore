@@ -1,3 +1,4 @@
+.env
+.env.local
 js/config.local.js
 *.local.js
-.env
