@@ -1,9 +1,9 @@
-// 👥 Список разрешённых администраторов
-const ADMINS = [
-  { username: "Kai", password: "KaiSatto3188" },
-  { username: "Kingo", password: "25802006Vk." },
-  { username: "Very", password: "jG8PEeuuF%HAG2FtP1zesZoYh3IY#$oD" }
-];
+// 👥 Список разрешённых администраторов 
+//const ADMINS = [
+ // { username: "Kai", password: "KaiSatto3188" },
+ // { username: "Kingo", password: "25802006Vk." },
+ // { username: "Very", password: "jG8PEeuuF%HAG2FtP1zesZoYh3IY#$oD" }
+//];
 
 const loginBtn = document.getElementById("adminLoginBtn");
 const modal = document.getElementById("adminLoginModal");
@@ -64,9 +64,12 @@ submitBtn.addEventListener("click", async () => {
 });
 
 // Проверка статуса при загрузке
+// Проверка статуса
 async function checkAdminStatus() {
   try {
-    const response = await fetch('/admin/status');
+    const response = await fetch('/api/admin/status', {  // ← ИСПРАВЬТЕ
+      credentials: 'include'
+    });
     const result = await response.json();
     
     if (result.ok) {
@@ -78,14 +81,14 @@ async function checkAdminStatus() {
   }
 }
 
-// Вызов при загрузке
-document.addEventListener('DOMContentLoaded', checkAdminStatus);
-
-// 🚪 Выход
+// Выход
 function logoutAdmin() {
-  currentAdmin = null;
-  adminPanel.classList.add("hidden");
-  logToConsole("🚪 Выход из админ-панели завершён.");
+  fetch('/api/admin/logout', { method: 'POST', credentials: 'include' })  // ← ИСПРАВЬТЕ
+    .then(() => {
+      currentAdmin = null;
+      adminPanel.classList.add("hidden");
+      logToConsole("🚪 Выход из админ-панели завершён.");
+    });
 }
 
 // ▶ Выполнение команд

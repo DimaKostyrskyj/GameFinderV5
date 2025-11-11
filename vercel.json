@@ -40,8 +40,8 @@
       "dest": "/admin.js"
     },
     {
-      "src": "/script.js", 
-      "dest": "/script.js"
+      "src": "js/script.js", 
+      "dest": "js/script.js"
     },
     {
       "src": "/(.*)",
