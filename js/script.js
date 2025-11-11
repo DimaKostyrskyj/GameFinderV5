@@ -6,6 +6,7 @@ const CONFIG = {
 };
 
 
+
 // Основной класс приложения
 class GameFinderApp {
     constructor() {
@@ -23,6 +24,11 @@ class GameFinderApp {
         this.initAudioSystem();
         this.initApp();
     }
+
+    initAdminIntegration() {
+  console.log('🔧 Initializing admin integration...');
+  // Админ панель уже инициализирована в admin.js
+}
 
     initializeAI() {
         console.log('🔧 Initializing AI...');
@@ -47,7 +53,7 @@ class GameFinderApp {
             this.createParticles();
             this.createStars();
             this.createStarShower();
-            
+            this.initAdminIntegration();
             // Инициализируем выбор AI
             this.initAISelector();
             
@@ -2532,6 +2538,7 @@ window.openStore = function(store, gameName) {
     
     window.open(urls[store], '_blank');
 };
+
 // Тест кнопки поиска
 console.log('🔧 Testing search button...');
 const testBtn = document.getElementById('searchBtn');

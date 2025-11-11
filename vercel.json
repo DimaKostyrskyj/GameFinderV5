@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "**/*.html",
       "use": "@vercel/static"
     },
@@ -10,11 +14,15 @@
       "use": "@vercel/static"
     },
     {
-      "src": "**/*.js",
+      "src": "public/**/*.js",
       "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
     {
       "src": "/styles/(.*)",
       "dest": "/styles/$1"
@@ -27,5 +35,13 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "env": {
+    "ADMIN_USERS": "Kai,Kingo,Very",
+    "ADMIN_HASH_Kai": "$2b$10$ваш_хеш_Kai",
+    "ADMIN_HASH_Kingo": "$2b$10$ваш_хеш_Kingo", 
+    "ADMIN_HASH_Very": "$2b$10$ваш_хеш_Very",
+    "SESSION_SECRET": "your-session-secret-key-here",
+    "OPENAI_API_KEY": "sk-7f36fac6978e4df0b3ee1e97534d5fc4"
+  }
 }
