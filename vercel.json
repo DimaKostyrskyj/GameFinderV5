@@ -14,7 +14,11 @@
       "use": "@vercel/static"
     },
     {
-      "src": "public/**/*.js",
+      "src": "js/**/*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.js",
       "use": "@vercel/static"
     }
   ],
@@ -24,24 +28,24 @@
       "dest": "/server.js"
     },
     {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
+    },
+    {
       "src": "/styles/(.*)",
       "dest": "/styles/$1"
     },
     {
-      "src": "/js/(.*)",
-      "dest": "/js/$1"
+      "src": "/admin.js",
+      "dest": "/admin.js"
+    },
+    {
+      "src": "/script.js", 
+      "dest": "/script.js"
     },
     {
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "env": {
-    "ADMIN_USERS": "Kai,Kingo,Very",
-    "ADMIN_HASH_Kai": "$2b$10$ваш_хеш_Kai",
-    "ADMIN_HASH_Kingo": "$2b$10$ваш_хеш_Kingo", 
-    "ADMIN_HASH_Very": "$2b$10$ваш_хеш_Very",
-    "SESSION_SECRET": "your-session-secret-key-here",
-    "OPENAI_API_KEY": "sk-7f36fac6978e4df0b3ee1e97534d5fc4"
-  }
+  ]
 }
