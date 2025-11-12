@@ -8,28 +8,7 @@
     <link rel="stylesheet" href="./styles/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-<button id="adminLoginBtn" class="admin-login-btn">⚙️</button>
-    
-<div id="adminLoginModal" class="admin-login-modal hidden">
-  <div class="admin-login-box">
-    <h3>🔐 Вход администратора</h3>
-    <input type="text" id="adminUser" placeholder="Логин">
-    <input type="password" id="adminPass" placeholder="Пароль">
-    <button id="adminSubmit">Войти</button>
-    <div id="adminError" class="admin-error"></div>
-  </div>
-</div>
-
-<!-- Панель администратора -->
-<div id="adminPanel" class="admin-panel hidden">
-  <h3>👨‍💻 Консоль администратора</h3>
-  <div id="adminConsole"></div>
-  <input id="adminCommand" placeholder="Введите команду...">
-  <button id="adminRun">▶ Выполнить</button>
-</div>
-
     <!-- Анимированный фон -->
     <div class="animated-bg"></div>
     <div class="particles-container" id="particles"></div>
@@ -460,6 +439,5 @@
     <script src="js/direct-ai.js"></script>
     <script src="js/ui-effects.js"></script>
     <script src="js/script.js"></script>
-    <script src="admin.js"></script>
 </body>
 </html>
