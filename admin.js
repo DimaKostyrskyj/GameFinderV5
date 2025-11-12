@@ -43,9 +43,10 @@ submitBtn.addEventListener("click", async () => {
   const pass = document.getElementById("adminPass").value.trim();
 
   try {
-    const response = await fetch('/admin/login', {
+    const response = await fetch('/api/admin/login', {  // ← ДОБАВЬТЕ /api/
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ username: user, password: pass })
     });
 

@@ -18,7 +18,7 @@
       "use": "@vercel/static"
     },
     {
-      "src": "**/*.js",
+      "src": "admin.js",
       "use": "@vercel/static"
     }
   ],
@@ -38,10 +38,6 @@
     {
       "src": "/admin.js",
       "dest": "/admin.js"
-    },
-    {
-      "src": "js/script.js", 
-      "dest": "js/script.js"
     },
     {
       "src": "/(.*)",
